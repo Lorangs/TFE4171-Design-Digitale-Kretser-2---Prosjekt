@@ -11,13 +11,17 @@ else
 	exit 1
 fi
 
+set SEED = `date +%s`  # Generate seed based on current time (seconds since epoch: 01. 01. 1970).
+
 printf "${RED}\nSimulating${NC}\n"
 if [[ "$@" =~ --gui ]]
 then
-  	echo vsim -assertdebug -voptargs="+acc" test_hdlc bind_hdlc -do "log -r *" &
+  	echo vsim -assertdebug -voptargs="+acc" test_hdlc bind_hdlc -do "log -r *" \
+      +seed=$SEED &
   	exit
 else
-	if vsim -assertdebug -c -voptargs="+acc" test_hdlc bind_hdlc -do "log -r *; run -all; exit" 
+	if vsim -assertdebug -c -voptargs="+acc" test_hdlc bind_hdlc -do "log -r *; run -all; exit" \
+      +seed=$SEED
 	then
 		echo "Success"
 	else
