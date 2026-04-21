@@ -34,18 +34,17 @@ module assertions_hdlc (
   /*******************************************
    *  Verify correct Rx_FlagDetect behavior  *
    *******************************************/
-
-  
-  sequence Rx_flag;
-    (Rx === 'h7E);
-  endsequence
+  // start and end of frame pattern: 8'h7E = 8'b01111110
+  sequence start_end_pattern;
+    (Rx == 'h7E);
+  endsequence;
 
   // Check if flag sequence is detected
-  property RX_FlagDetect;
-    @(posedge Clk) Rx_flag |-> ##2 Rx_FlagDetect;
+  property start_end_detected;
+    @(posedge Clk) start_end_pattern |-> ##2 Rx_FlagDetect;
   endproperty
 
-  RX_FlagDetect_Assert : assert property (RX_FlagDetect) begin
+  start_end_detected_Assert : assert property (start_end_detected) begin
     $display("PASS: Flag detect");
   end else begin 
     $error("Flag sequence did not generate FlagDetect"); 
@@ -55,17 +54,31 @@ module assertions_hdlc (
   /********************************************
    *  Verify correct Rx_AbortSignal behavior  *
    ********************************************/
+  // Abbort pattern: 8'hFE = 8'b11111110
+  sequence abbort_pattern;
+    (Rx == 'hFE);
+  endsequence;
 
-  //If abort is detected during valid frame. then abort signal should go high
-  property RX_AbortSignal;
-    @(posedge Clk) (Rx === 'hFE) |-> ##2 Rx_AbortDetect;
-  endproperty
+  // Check if abort pattern is detected and abort signal is generated
+  property abbort_detected;
+    @(posedge Clk) abbort_pattern |-> Rx_AbortDetect;
+  endproperty:
   
-  RX_AbortSignal_Assert : assert property (RX_AbortSignal) begin
+  abbort_detected_assert: assert property (abbort_detected) begin
     $display("PASS: Abort signal");
   end else begin 
     $error("AbortSignal did not go high after AbortDetect during validframe"); 
     ErrCntAssertions++; 
   end
+
+  /*********************************************
+   * Verify removal of inserted zeros when Rx_ValidFrame is high *
+    *********************************************/
+
+  
+
+  /*********************************************
+   * Verify correct calculation of CRC
+  *********************************************/
 
 endmodule

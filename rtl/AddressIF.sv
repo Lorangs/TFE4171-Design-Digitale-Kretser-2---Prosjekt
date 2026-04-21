@@ -42,7 +42,7 @@ module AddressIF (
   assign Rx_Drop       = Rx_SC[1];
   assign Rx_FCSen      = Rx_SC[5];
   assign Rx_Len        = Rx_FrameSize;
-  assign Rx_Buff       = Rx_DataBuffer;
+  assign Rx_Buff       = Rx_DataBuffer;fdafkdløæa
   assign Tx_Enable     = Tx_SC[1];
   assign Tx_AbortFrame = Tx_SC[2];
   assign Tx_DataInBuff = Tx_Buff;
