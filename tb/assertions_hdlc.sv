@@ -31,9 +31,7 @@ module assertions_hdlc (
     ErrCntAssertions  =  0;
   end
 
-  /*******************************************
-   *  Verify correct Rx_FlagDetect behavior  *
-   *******************************************/
+
   // start and end of frame pattern: 8'h7E = 8'b01111110
   sequence start_end_pattern;
     (Rx == 'h7E);
@@ -44,41 +42,54 @@ module assertions_hdlc (
     @(posedge Clk) start_end_pattern |-> ##2 Rx_FlagDetect;
   endproperty
 
-  start_end_detected_Assert : assert property (start_end_detected) begin
+  start_end_detected_assert : assert property (start_end_detected) begin
     $display("PASS: Flag detect");
   end else begin 
     $error("Flag sequence did not generate FlagDetect"); 
     ErrCntAssertions++; 
   end
 
-  /********************************************
-   *  Verify correct Rx_AbortSignal behavior  *
-   ********************************************/
-  // Abbort pattern: 8'hFE = 8'b11111110
-  sequence abbort_pattern;
+
+  // Abort pattern: 8'hFE = 8'b11111110
+  sequence rx_abort_pattern;
     (Rx == 'hFE);
   endsequence;
 
   // Check if abort pattern is detected and abort signal is generated
-  property abbort_detected;
-    @(posedge Clk) abbort_pattern |-> Rx_AbortDetect;
-  endproperty:
+  property rx_abort_detected;
+    @(posedge Clk) rx_abort_pattern |-> Rx_AbortDetect;
+  endproperty
   
-  abbort_detected_assert: assert property (abbort_detected) begin
+  rx_abort_detected_assert : assert property (rx_abort_detected) begin
     $display("PASS: Abort signal");
   end else begin 
     $error("AbortSignal did not go high after AbortDetect during validframe"); 
     ErrCntAssertions++; 
   end
 
-  /*********************************************
-   * Verify removal of inserted zeros when Rx_ValidFrame is high *
-    *********************************************/
+ 
 
+ // Idle pattern: 8'b11111111
+  sequence rx_idle_pattern;
+    (RX == 'hFF);
+  endsequence;
+
+  property rx_idle_detected;
+    rx_idle_patter |-> ##1 Rx_ValidFrame;
+  endproperty;
+
+  rx_idle_detected_assert:  assert property(@(posedge Clk) disable iff(Rx_AbortDetected || !Rst) rx_idle_detected) else begin
+    $error("ERROR: Rx did not correctly generate idle pattern.");
+    ErrCntAssertions++;
+  end
   
+  property tx_idle_pattern;
+    $fell(Tx_ValidFrame) and !Tx_AbortedTrans |-> ##1 (Tx throughout Tx_ValidFrame [->1]);
+  endproperty;
 
-  /*********************************************
-   * Verify correct calculation of CRC
-  *********************************************/
+  tx_idle_assertion:  assert property(@(posedge Clk) diable iff(!Rst) tx_idle_pattern) else begin
+    $error("ERROR: Tx did not generate idle pattern properly");
+    ErrCntAssertions++;
+  end
 
 endmodule

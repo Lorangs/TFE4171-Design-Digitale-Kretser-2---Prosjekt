@@ -51,4 +51,8 @@ interface in_hdlc ();
   logic       RxD;
   logic       ZeroDetect;
 
+  // TX internal
+  logic       Tx_Done;
+  logic       Tx_RdBuff;
+
 endinterface

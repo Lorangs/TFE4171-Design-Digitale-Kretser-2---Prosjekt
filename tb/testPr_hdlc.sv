@@ -61,6 +61,7 @@
 */
 
 `define BUFFER_SIZE         128  // Size of Rx_Buff and Tx_Buff in bytes
+`define FCS_SIZE            2    // Size of FCS in bytes
 `define NUM_RANDOM_TESTS    10   // Number of random tests to perform for each test case in the test program
 
 `define START_END_FLAG      8'b01111110
@@ -76,13 +77,16 @@ program testPr_hdlc(
   int TbErrorCnt;
 
   initial begin
+    int randomseed;
+    int Size;
+
     $display("------------------------------------");
     $display("Event %t: Starting Test Program", $time);
     $display("------------------------------------");
 
     Init();
 
-    int randomseed = 0; 
+    randomseed = 0; 
     if (!$value$plusargs("seed=%d", randomseed)) begin
       randomseed = 12345;  // Default fallback
     end
@@ -91,7 +95,6 @@ program testPr_hdlc(
     $display("Random seed for this run: %0d", randomseed);
 
     // Generate stimulus and verify response for different size frames
-    int Size;
     for (int i = 0; i < `NUM_RANDOM_TESTS; i++) begin
       if (i == 0)
         Size = 1;                               // minimum size frame
@@ -101,25 +104,16 @@ program testPr_hdlc(
         Size = $urandom_range(1, `BUFFER_SIZE); // random size frame
 
         // Test behaviour:
-        VerifyNormalReceive();
-        #`WAIT_TIME_ns;
-        VerifyAbortReceive();
-        #`WAIT_TIME_ns;
-        VerifyOverflowReceive();
-        #`WAIT_TIME_ns;
-        VerifyDroppedReceive();
-        #`WAIT_TIME_ns;
-        VerifyRxLENReceive();
-        #`WAIT_TIME_ns;
-        VerifyFCSerrReceive();
-        #`WAIT_TIME_ns;
-        VerifyNonByteAlignedReceive();
-        #`WAIT_TIME_ns;
-        VerfiyNormalTransmit();
-        #`WAIT_TIME_ns;
-        VerifyAbortTransmit();
-        #`WAIT_TIME_ns;
-    
+        Receive( 10, 0, 0, 0, 0, 0, 0); //Normal
+        Receive( 40, 1, 0, 0, 0, 0, 0); //Abort
+        Receive(40, 0, 1, 0, 0, 0, 0); // FCSerr
+        Receive(40, 0, 0, 1, 0, 0, 0); // Non-byte aligned
+        Receive(126, 0, 0, 0, 1, 0, 0); //Overflow
+        Receive(40, 0, 0, 0, 0, 1, 0); // Dropped
+        Receive(40, 0, 0, 0, 0, 0, 1); // Skip read
+        Transmit(10, 0); // Normal
+        Transmit(10, 1); // Abort
+    end
 
     $display("------------------------------------");
     $display("Event %t: Finishing Test Program", $time);
@@ -242,9 +236,13 @@ program testPr_hdlc(
     for (int i = 0; i < Size; i++) begin
       ReceiveData[i] = $urandom;
     end
+    ReceiveData[Size]   = '0;
+    ReceiveData[Size+1] = '0;
 
     //Calculate FCS bits;
     GenerateFCSBytes(ReceiveData, Size, FCSBytes);
+    if (FCSerr)
+      FCSBytes = FCSBytes ^ 16'h0001; // Flip the final bit in FSC to generate FCS error
     ReceiveData[Size]   = FCSBytes[7:0];
     ReceiveData[Size+1] = FCSBytes[15:8];
 
@@ -282,15 +280,30 @@ program testPr_hdlc(
       VerifyAbortReceive(ReceiveData, Size);
     else if(Overflow)
       VerifyOverflowReceive(ReceiveData, Size);
+    else if (Drop)
+      VerifyDroppedReceive(ReceiveData, Size);
+    else if(FCSerr)
+      VerifyFCSerrReceive(ReceiveData, Size);
+    else if(NonByteAligned)
+      VerifyNonByteAlignedReceive(ReceiveData, Size);
     else if(!SkipRead)
       VerifyNormalReceive(ReceiveData, Size);
 
     #`WAIT_TIME_ns;
   endtask
 
-  task Transmit(int Size, int Abort, output logic [127:0][7:0] WrittenData, output logic [127:0][7:0] TransmittedData, output logic [15:0] FCSBytes);
+  task Transmit(int Size, int Abort);
+    logic [127:0][7:0] WrittenData;
+    logic [127:0][7:0] TransmittedData;
+    logic [15:0] FCSBytes;
+    string msg;
+
+    if (Abort)
+      msg = "- Abort";
+    else
+      msg = "- Normal";
     $display("----------------------------------------------");
-    $display("Event %t: Transmitting message (Size=%0d, Abort=%0d)", $time, Size, Abort);
+    $display("Event %t: Transmitting message %s (Size=%0d)", $time, msg, Size);
     $display("----------------------------------------------");
 
     for (int i = 0; i < Size; i++)
@@ -307,16 +320,86 @@ program testPr_hdlc(
 
     VerifyTxFull(Size);
 
-    //Start transmission and read Tx output
+    //Start transmission
     WriteAddress(`Tx_SC_ADDR, 8'h02);
 
-    fork
-      ReadTransmittedData(Size+2, Abort, TransmittedData);
-      WaitAndVerifyTxDone(Size, Abort);
-    join
+    if (Abort) begin
+      // Let transmission start, then issue abort
+      repeat(10)
+        @(posedge uin_hdlc.Clk);
+      WriteAddress(`Tx_SC_ADDR, 8'h04);
 
-    repeat(8)
+      repeat(20)
+        @(posedge uin_hdlc.Clk);
+
+      VerifyAbortTransmit();
+    end else begin
+      fork
+        ReadTransmittedData(Size+2, Abort, TransmittedData);
+        WaitAndVerifyTxDone(Size, Abort);
+      join
+
+      repeat(8)
+        @(posedge uin_hdlc.Clk);
+
+      VerfiyNormalTransmit(WrittenData, TransmittedData, FCSBytes, Size);
+    end
+
+    #`WAIT_TIME_ns;
+  endtask
+
+  task ReadTransmittedData(int Size, int Abort, output logic [127:0][7:0] TransmittedData);
+    logic [7:0] flag_shift;
+    int ones_cnt;
+    int bit_idx, byte_idx;
+    logic bit_val;
+
+    TransmittedData = '0;
+    flag_shift = '1;
+
+    // Wait for start flag (01111110) on Tx line (Spec 5)
+    forever begin
       @(posedge uin_hdlc.Clk);
+      flag_shift = {uin_hdlc.Tx, flag_shift[7:1]};
+      if (flag_shift == `START_END_FLAG) break;
+    end
+
+    // Read data bytes with zero removal (Spec 6)
+    ones_cnt = 0;
+    bit_idx  = 0;
+    byte_idx = 0;
+
+    while (byte_idx < Size) begin
+      @(posedge uin_hdlc.Clk);
+      bit_val = uin_hdlc.Tx;
+
+      if (bit_val) begin
+        ones_cnt++;
+        if (ones_cnt >= 7) begin
+          // Abort pattern detected (Spec 8)
+          break;
+        end
+        TransmittedData[byte_idx][bit_idx] = 1'b1;
+        bit_idx++;
+      end else begin
+        if (ones_cnt == 5) begin
+          // Stuffed zero - discard (Spec 6)
+          ones_cnt = 0;
+        end else if (ones_cnt == 6) begin
+          // End flag detected (Spec 5)
+          break;
+        end else begin
+          TransmittedData[byte_idx][bit_idx] = 1'b0;
+          bit_idx++;
+          ones_cnt = 0;
+        end
+      end
+
+      if (bit_idx == 8) begin
+        bit_idx  = 0;
+        byte_idx++;
+      end
+    end
   endtask
 
   task GenerateFCSBytes(logic [127:0][7:0] Data, int Size, output logic[15:0] FCSBytes);
@@ -426,8 +509,7 @@ program testPr_hdlc(
 
   endtask
 
-  // VerifyNormalReceive should verify correct value in the Rx status/control
-  // register, and that the Rx data buffer contains correct data.
+  // Spec 13:
   task VerifyOverflowReceive(logic [127:0][7:0] data, int Size);
     logic [7:0] ReadData;
     logic [7:0] RxStatusControl;
@@ -435,7 +517,7 @@ program testPr_hdlc(
 
     ReadAddress(`Rx_SC_ADDR, RxStatusControl);
 
-    assert(Size >= `BUFFER_SIZE-2) else begin 
+    assert(Size >= `BUFFER_SIZE-`FCS_SIZE) else begin 
       $error("Overflow bit is high, but Size (%d) is smaller than buffer size.", Size);
       TbErrorCnt++;
     end
@@ -461,8 +543,8 @@ program testPr_hdlc(
     end 
 
     // assert first 125 bytes match in Rx_buff
-    for (int i = 0; i < `BUFFER_SIZE-2; i++) begin 
-      ReadAddress(`Rx_BUFF_ADDR, ReadData);         // read off data from Rx_buff at address 'h3
+    for (int i = 0; i < `BUFFER_SIZE -`FCS_SIZE; i++) begin 
+      ReadAddress(`Rx_BUFFER_ADDR, ReadData);         // read off data from Rx_buff at address 'h3
       assert (ReadData == data[i]) else begin 
         $error("Rx_Data %h is not equal to data %h", ReadData, data[i]);
         TbErrorCnt++;
@@ -471,8 +553,9 @@ program testPr_hdlc(
     end 
 
     // assert out of bounds indexes is set to zero
-    for (int i = `BUFFER_SIZE-2; i < Size; i++) begin 
-      ReadAddress(`Rx_BUFF_ADDR, ReadData);         
+    for (int i = `BUFFER_SIZE -`FCS_SIZE; i < Size; i++) begin 
+      ReadAddress(`Rx_BUFFER_ADDR, ReadData);         
+      assert(ReadData == 'h00) else begin
         $error("Out of Bounds data should be set to zero. Rx_Data[%d] is %h, which is out of bounds of len Rx_Data == 126", i, ReadData);
         TbErrorCnt++;
       end 
@@ -483,30 +566,150 @@ program testPr_hdlc(
   task VerifyDroppedReceive(logic [127:0][7:0] data, int Size);
     logic [7:0] ReadData;
     logic [7:0] RxStatusControl;
-    wait(uid.hdlc.Rx_Ready);
+    wait(uin_hdlc.Rx_Ready);
 
     ReadAddress(`Rx_SC_ADDR, RxStatusControl);
 
     assert(RxStatusControl[`Rx_SC_DROP] == 1) else begin
-      $error("Rx_Drop should be high when drop signal is received.")
+      $error("Rx_Drop should be high when drop signal is received.");
+      TbErrorCnt++;
     end
     
   endtask
 
   task VerifyFCSerrReceive(logic [127:0][7:0] data, int Size);
+    logic [7:0] ReadData;
+    logic [7:0] RxStatusControl;
+    wait(uin_hdlc.Rx_FrameError);
 
+    ReadAddress(`Rx_SC_ADDR, RxStatusControl);
+
+    // Spec 16: FCS error should result in frame error
+    assert(RxStatusControl[`Rx_SC_FRAME_ERR] == 1) else begin
+      $error("Rx_FrameError should be 1 when FCS error occurs");
+      TbErrorCnt++;
+    end
+
+    // Spec 3: Check all other status bits
+    assert(RxStatusControl[`Rx_SC_READY] == 0) else begin
+      $error("Rx_Ready should be 0 when frame received with FCS error");
+      TbErrorCnt++;
+    end
+
+    assert(RxStatusControl[`Rx_SC_ABORT_SIG] == 0) else begin
+      $error("Rx_AbortSignal should be 0 when FCS error occurs");
+      TbErrorCnt++;
+    end
+
+    assert(RxStatusControl[`Rx_SC_OVERFLOW] == 0) else begin
+      $error("Rx_Overflow should be 0 when FCS error occurs");
+      TbErrorCnt++;
+    end
+
+    // Spec 2: Buffer should contain zeros after frame error
+    for (int i = 0; i < Size; i++) begin
+      ReadAddress(`Rx_BUFFER_ADDR, ReadData);
+      assert(ReadData == 'h00) else begin
+        $error("Rx_Data[%0d] should be zero after FCS error, got %h", i, ReadData);
+        TbErrorCnt++;
+      end
+      @(posedge uin_hdlc.Clk);
+    end
   endtask
 
   task VerifyNonByteAlignedReceive(logic [127:0][7:0] data, int Size);
+    logic [7:0] ReadData;
+    logic [7:0] RxStatusControl;
+    wait(uin_hdlc.Rx_FrameError);
 
+    ReadAddress(`Rx_SC_ADDR, RxStatusControl);
+
+    // Spec 16: Non-byte aligned data should result in frame error
+    assert(RxStatusControl[`Rx_SC_FRAME_ERR] == 1) else begin
+      $error("Rx_FrameError should be 1 when non-byte aligned data received");
+      TbErrorCnt++;
+    end
+
+    // Spec 3: Check all other status bits
+    assert(RxStatusControl[`Rx_SC_READY] == 0) else begin
+      $error("Rx_Ready should be 0 when non-byte aligned frame received");
+      TbErrorCnt++;
+    end
+
+    assert(RxStatusControl[`Rx_SC_ABORT_SIG] == 0) else begin
+      $error("Rx_AbortSignal should be 0 when non-byte aligned data received");
+      TbErrorCnt++;
+    end
+
+    assert(RxStatusControl[`Rx_SC_OVERFLOW] == 0) else begin
+      $error("Rx_Overflow should be 0 when non-byte aligned data received");
+      TbErrorCnt++;
+    end
+
+    // Spec 2: Buffer should contain zeros after frame error
+    for (int i = 0; i < Size; i++) begin
+      ReadAddress(`Rx_BUFFER_ADDR, ReadData);
+      assert(ReadData == 'h00) else begin
+        $error("Rx_Data[%0d] should be zero after non-byte aligned receive, got %h", i, ReadData);
+        TbErrorCnt++;
+      end
+      @(posedge uin_hdlc.Clk);
+    end
   endtask
 
-  task VerfiyNormalTransmit();
+  task VerfiyNormalTransmit(logic [127:0][7:0] WrittenData, logic [127:0][7:0] TransmittedData, logic [15:0] FCSBytes, int Size);
+    logic [7:0] TxStatusControl;
 
+    wait(uin_hdlc.Tx_Enable)
+
+    // Spec 4: Verify transmitted data matches written TX buffer
+    for (int i = 0; i < Size; i++) begin
+      assert(TransmittedData[i] == WrittenData[i]) else begin
+        $error("VerfiyNormalTransmit: Data mismatch at byte %0d: expected %h, got %h", i, WrittenData[i], TransmittedData[i]);
+        TbErrorCnt++;
+      end
+    end
+
+    VerifyCRCCheck(TransmittedData, FCSBytes, Size);
+
+    ReadAddress(`Tx_SC_ADDR, TxStatusControl);
+    // Spec 17: Verify Tx_Done is asserted after entire TX buffer read
+    assert(TxStatusControl[`Tx_SC_DONE] == 1) else begin
+      $error("VerfiyNormalTransmit: Tx_Done should be 1 after normal transmission");
+      TbErrorCnt++;
+    end
+
+    // Spec 3: Verify no abort bits set after normal transmission
+    assert(TxStatusControl[`Tx_SC_ABORT_TRANS] == 0) else begin
+      $error("VerfiyNormalTransmit: Tx_AbortedTrans should be 0 after normal transmission");
+      TbErrorCnt++;
+    end
+
+    // Tx_Overflow is mentioned in datasheet, but there is non Tx_Overflow bit in Tx_SC ?
+    /*
+    if (Size >= `BUFFER_SIZE - `FCS_SIZE) begin
+      assert(TxStatusControl[`Tx_SC_OVERFLOW] == 1) else begin
+        $error("VerifyNormalTransmit: Tx_Overflow should be set high when transmitting more than 126 bytes.");
+        TbErrorCnt++;
+    end
+    */
   endtask
 
   task VerifyAbortTransmit();
+    logic [7:0] TxStatusControl;
 
+    // Spec 9: Verify Tx_AbortedTrans is asserted
+    ReadAddress(`Tx_SC_ADDR, TxStatusControl);
+    assert(TxStatusControl[`Tx_SC_ABORT_TRANS] == 1) else begin
+      $error("VerifyAbortTransmit: Tx_AbortedTrans should be 1 after aborting transmission");
+      TbErrorCnt++;
+    end
+
+    // Spec 17: Tx_Done should also be asserted after abort
+    assert(TxStatusControl[`Tx_SC_DONE] == 1) else begin
+      $error("VerifyAbortTransmit: Tx_Done should be 1 after abort");
+      TbErrorCnt++;
+    end
   endtask
 
   /* ------------------------- 
@@ -532,7 +735,7 @@ program testPr_hdlc(
     logic [7:0] TxStatusControl;
     ReadAddress(`Tx_SC_ADDR, TxStatusControl);
 
-    if (Size >= `BUFFER_SIZE-2) begin
+    if (Size >= `BUFFER_SIZE -`FCS_SIZE) begin
       assert(TxStatusControl[`Tx_SC_FULL] == 1) $display("Event %t: Tx_Full Correctly asserted (Size=%0d)", $time, Size);
       else begin
         $error("Event %t: Tx_Full should be 1 when %0d bytes written (>= 126)", $time, Size);
@@ -546,5 +749,59 @@ program testPr_hdlc(
       end
     end
   endtask
+
+    // Spec 11.b:
+  task VerifyCRCCheck(logic [127:0][7:0] data, logic [15:0] FCSBytes, int Size);
+    assert(data[Size] == FCSBytes[7:0]) else begin
+      $error("VerfiyCRCCheck: FCS byte 0 mismatch: expected %h, got %h", FCSBytes[7:0], data[Size]);
+      TbErrorCnt++;
+    end
+    assert(data[Size+1] == FCSBytes[15:8]) else begin
+      $error("VerifyCRCCheck: FCS byte 1 mismatch: expected %h, got %h", FCSBytes[15:8], data[Size+1]);
+      TbErrorCnt++;
+    end
+  endtask;
+
+/*
+  // Spec 5 and 12:
+  task VerifyStartEndPatternGeneration(logic [127:0][7:0] data, int Size)
+
+  
+  endtask;
+
+  // Spec 6:
+  task VerifyTxZeroInsert(logic [127:0][7:0] data, int Size)
+    int ones_cnt;
+  endtask;
+
+  // Spec 7:
+  task VerifyIdlePatternGeneration(logic [127:0][7:0] data, int Size)
+
+  endtask;
+
+  // Spec 8:
+  task VerifyAbortPatternGeneration(logic [127:0][7:0] data, int Size)
+
+  endtask;
+
+  // Spec 9:
+  task VerifyAbortDuringTransmission(logic [127:0][7:0] data, int Size)
+
+  endtask;
+
+  // Spec 11.a:
+  task VerifyCRCGeneration(logic [127:0][7:0] data, int Size)
+    logic [127:0][7:0] 
+
+    wait(uid_hdlc.)
+  endtask;
+
+  // Spec 14:
+  task VerifyFrameLengthMatchRxLEN(logic [127:0][7:0] data, int Size)
+
+  endtask;
+*/
+
+
 
 endprogram
