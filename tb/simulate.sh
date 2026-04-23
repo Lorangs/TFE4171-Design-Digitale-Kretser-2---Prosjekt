@@ -16,14 +16,14 @@ SEED=$(date +%s)  # Generate seed based on current time (seconds since epoch: 01
 printf "${RED}\nSimulating${NC}\n"
 if [[ "$@" =~ --gui ]]
 then
-  	vsim -assertdebug -voptargs="+acc" test_hdlc bind_hdlc \
+  	vsim -coverage -assertdebug -voptargs="+acc" test_hdlc bind_hdlc \
       +seed=$SEED \
-	  -do "log -r *; coverage save -onexit -cvg -assert -directive coverage.ucdb" &
+	  -do "log -r *; coverage save -onexit -cvg -assert -directive -code bcestf coverage.ucdb" &
   	exit
 else
-	if vsim -assertdebug -c -voptargs="+acc" test_hdlc bind_hdlc \
+	if vsim -coverage -assertdebug -c -voptargs="+acc" test_hdlc bind_hdlc \
       +seed=$SEED \
-	  -do "log -r *; coverage save -onexit -cvg -assert -directive coverage.ucdb; run -all; exit"
+	  -do "log -r *; coverage save -onexit -cvg -assert -directive -code bcestf coverage.ucdb; run -all; exit"
 	then
 		echo "Success"
 	else

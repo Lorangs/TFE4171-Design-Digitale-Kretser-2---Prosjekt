@@ -104,10 +104,18 @@ module assertions_hdlc (
     ErrCntAssertions++;
   end
 
-  // Verifiserer Tx abort pattern (spec 8) - 7+ consecutive 1s on Tx (HDLC abort = no zero-stuffing)
+  sequence tx_abort_pattern;
+    !Tx ##1 Tx [*7];
+  endsequence;
+
+  // Verifiserer Tx abort pattern (spec 8) - only when mid-transmission
   property tx_abort_detected;
     @(posedge Clk) disable iff(!Rst)
-    $rose(Tx_AbortedTrans) |-> ##[1:3] Tx [*7];
+    $rose(Tx_AbortFrame) ##1 $fell(Tx_AbortFrame) |-> ##[0:128] tx_abort_pattern;
+    //$rose(Tx_AbortedTrans) |-> ##2 !Tx ##1 Tx [*7];
+    //Rx_ValidFrame [*8] and rx_abort_pattern |-> ##2 Rx_AbortDetect |-> ##1 Rx_AbortSignal;
+    //$rose(Tx_AbortedTrans |-> ##1 tx_abort_pattern;
+    //Tx_AbortFrame |-> ##4 tx_abort_pattern;
   endproperty;
 
   tx_abort_assertion: assert property(tx_abort_detected) else begin
@@ -119,9 +127,9 @@ module assertions_hdlc (
     @(posedge Clk) disable iff(!Rst) 
     $rose(Tx_AbortFrame) ##1 $fell(Tx_AbortFrame) |-> ##1 $rose(Tx_AbortedTrans);
   endproperty
-  /*
+  
   tx_abort_trans_assertion: assert property(tx_abort_trans_generation) else begin
-    $error("ERROR: Tx_AbortTrans did not go high one clk cycle after Tx_AbortFrame.")
-
-  */
+    $error("ERROR: Tx_AbortTrans did not go high one clk cycle after Tx_AbortFrame.");
+    ErrCntAssertions++;
+  end
 endmodule

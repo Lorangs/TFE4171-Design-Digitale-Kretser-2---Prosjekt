@@ -1,0 +1,2053 @@
+QuestaSim vcover 2025.2 Coverage Utility 2025.05 May 31 2025
+Start time: 21:38:31 on Apr 23,2026
+vcover report -details -code bcestf coverage.ucdb 
+Coverage Report by instance with details
+
+=================================================================================
+=== Instance: /test_hdlc/u_dut/u_AddressIF
+=== Design Unit: work.AddressIF
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        15        13         2    86.66%
+
+================================Branch Details================================
+
+Branch Coverage for instance /test_hdlc/u_dut/u_AddressIF
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/AddressIF.sv
+------------------------------------IF Branch------------------------------------
+    51                                    464169     Count coming in to IF
+    51              1                          2     
+    56              1                     464167     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    57                                    464167     Count coming in to IF
+    57              1                     141602     
+    73              1                     322565     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------CASE Branch------------------------------------
+    58                                    141602     Count coming in to CASE
+    59              1                       3000     
+    63              1                     130602     
+    67              1                       8000     
+                                         ***0***     All False Count
+Branch totals: 3 hits of 4 branches = 75.00%
+
+------------------------------------IF Branch------------------------------------
+    97                                   1175015     Count coming in to IF
+    97              1                     471123     
+                                          703892     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------CASE Branch------------------------------------
+    98                                    471123     Count coming in to CASE
+    99              1                       4000     
+    100             1                       6000     
+    101             1                     458123     
+    105             1                       3000     
+                                         ***0***     All False Count
+Branch totals: 4 hits of 5 branches = 80.00%
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      33        33         0   100.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /test_hdlc/u_dut/u_AddressIF --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/AddressIF.sv
+    50              1                     464169     
+    52              1                          2     
+    53              1                          2     
+    54              1                          2     
+    55              1                          2     
+    60              1                       3000     
+    61              1                       3000     
+    64              1                     130602     
+    65              1                     130602     
+    68              1                       8000     
+    69              1                       8000     
+    74              1                     322565     
+    75              1                     322565     
+    76              1                     322565     
+    77              1                     322565     
+    78              1                     322565     
+    81              1                     464167     
+    82              1                     464167     
+    83              1                     464167     
+    84              1                     464167     
+    85              1                     464167     
+    87              1                     464167     
+    88              1                     464167     
+    89              1                     464167     
+    90              1                     464167     
+    94              1                    1175015     
+    95              1                    1175015     
+    96              1                    1175015     
+    99              1                       4000     
+    100             1                       6000     
+    102             1                     458123     
+    103             1                     458123     
+    105             1                       3000     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        200       185        15    92.50%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /test_hdlc/u_dut/u_AddressIF --
+
+                                              Node      1H->0L      0L->1H                          "Coverage"
+                                              ---------------------------------------------------------------
+                                               Rst           0           1                               50.00 
+                                   Rx_FrameSize[7]           0           0                                0.00 
+                                         Rx_Len[7]           0           0                                0.00 
+                                        Rx_SC[6-7]           0           0                                0.00 
+                                        Tx_SC[5-7]           0           0                                0.00 
+
+Total Node Count     =        100 
+Toggled Node Count   =         92 
+Untoggled Node Count =          8 
+
+Toggle Coverage      =      92.50% (185 of 200 bins)
+
+=================================================================================
+=== Instance: /test_hdlc/u_dut/u_TxController
+=== Design Unit: work.TxController
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        35        31         4    88.57%
+
+================================Branch Details================================
+
+Branch Coverage for instance /test_hdlc/u_dut/u_TxController
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/TxController.sv
+------------------------------------IF Branch------------------------------------
+    36                                    698774     Count coming in to IF
+    36              1                          2     
+    45              1                     698772     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------CASE Branch------------------------------------
+    46                                    698772     Count coming in to CASE
+    47              1                     265329     
+    63              1                       6000     
+    74              1                       2000     
+    81              1                       2000     
+    89              1                     301688     
+    111             1                     100526     
+    120             1                      16407     
+    139             1                       4822     
+                                         ***0***     All False Count
+Branch totals: 8 hits of 9 branches = 88.88%
+
+------------------------------------IF Branch------------------------------------
+    54                                    265329     Count coming in to IF
+    54              1                       2000     
+    58              1                     263329     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    65                                      6000     Count coming in to IF
+    65              1                    ***0***     
+    67              1                       2000     
+    71              1                       4000     
+Branch totals: 2 hits of 3 branches = 66.66%
+
+------------------------------------IF Branch------------------------------------
+    76                                      2000     Count coming in to IF
+    76              1                    ***0***     
+    78              1                       2000     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    82                                      2000     Count coming in to IF
+    82              1                    ***0***     
+    84              1                       2000     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    92                                    301688     Count coming in to IF
+    92              1                        842     
+    96              1                      99675     
+    106             1                     201171     
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    97                                     99675     Count coming in to IF
+    97              1                      98526     
+    101             1                       1149     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    115                                   100526     Count coming in to IF
+    115             1                          9     
+    117             1                     100517     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    121                                    16407     Count coming in to IF
+    121             1                        149     
+    123             1                      16258     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    124                                    16258     Count coming in to IF
+    124             1                       5331     
+    128             1                      10927     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    131                                    16258     Count coming in to IF
+    131             1                       1000     
+    135             1                      15258     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    144                                     4822     Count coming in to IF
+    144             1                        999     
+    148             1                       3823     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       4         3         1    75.00%
+
+================================Condition Details================================
+
+Condition Coverage for instance /test_hdlc/u_dut/u_TxController --
+
+  File ../rtl/TxController.sv
+----------------Focused Condition View-------------------
+Line       54 Item    1  (DataAvail && ~AbortFrame)
+Condition totals: 1 of 2 input terms covered = 50.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+   DataAvail         Y
+  AbortFrame         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  DataAvail_0           -                             
+  Row   2:          1  DataAvail_1           ~AbortFrame                   
+  Row   3:          1  AbortFrame_0          DataAvail                     
+  Row   4:    ***0***  AbortFrame_1          DataAvail                     
+
+----------------Focused Condition View-------------------
+Line       131 Item    1  ((NewByteCounter == 4) && NewByte)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+
+FSM Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    FSM States                       8         8         0   100.00%
+    FSM Transitions                 20        12         8    60.00%
+
+================================FSM Details================================
+
+FSM Coverage for instance /test_hdlc/u_dut/u_TxController --
+
+FSM_ID: ControllerState
+    Current State Object : ControllerState
+    ----------------------
+    State Value MapInfo :
+    ---------------------
+Line          State Name               Value
+----          ----------               -----
+  47                IDLE                   0
+  63            WAIT_FCS                   1
+  74          FIRST_READ                   2
+ 139               ABORT                   7
+  81               START                   3
+ 111                READ                   5
+  89                 RUN                   4
+ 120                 FCS                   6
+    Covered States :
+    ----------------
+                   State           Hit_count
+                   -----           ---------
+                    IDLE              265330          
+                WAIT_FCS                6000          
+              FIRST_READ                2000          
+                   ABORT                4823          
+                   START                2000          
+                    READ              100526          
+                     RUN              301688          
+                     FCS               16407          
+    Covered Transitions :
+    ---------------------
+Line            Trans_ID           Hit_count          Transition          
+----            --------           ---------          ----------          
+  55                   0                2000          IDLE -> WAIT_FCS              
+  68                   1                2000          WAIT_FCS -> FIRST_READ          
+  79                   4                2000          FIRST_READ -> START           
+ 145                   7                 999          ABORT -> IDLE                 
+  85                   8                2000          START -> READ                 
+ 118                  11              100517          READ -> RUN                   
+ 116                  12                   9          READ -> ABORT                 
+ 102                  14                1149          RUN -> FCS                    
+  98                  15               98526          RUN -> READ                   
+  93                  16                 842          RUN -> ABORT                  
+ 132                  18                1000          FCS -> IDLE                   
+ 122                  19                 149          FCS -> ABORT                  
+    Uncovered Transitions :
+    -----------------------
+Line            Trans_ID          Transition          
+----            --------          ----------          
+  66                   2          WAIT_FCS -> ABORT   
+  37                   3          WAIT_FCS -> IDLE    
+  77                   5          FIRST_READ -> ABORT 
+  37                   6          FIRST_READ -> IDLE  
+  83                   9          START -> ABORT      
+  37                  10          START -> IDLE       
+  37                  13          READ -> IDLE        
+  37                  17          RUN -> IDLE         
+
+
+    Summary                       Bins      Hits    Misses  Coverage
+    -------                       ----      ----    ------  --------
+        FSM States                   8         8         0   100.00%
+        FSM Transitions             20        12         8    60.00%
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      60        57         3    95.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /test_hdlc/u_dut/u_TxController --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/TxController.sv
+    35              1                     698774     
+    37              1                          2     
+    38              1                          2     
+    39              1                          2     
+    40              1                          2     
+    41              1                          2     
+    42              1                          2     
+    43              1                          2     
+    44              1                          2     
+    48              1                     265329     
+    49              1                     265329     
+    50              1                     265329     
+    51              1                     265329     
+    52              1                     265329     
+    53              1                     265329     
+    55              1                       2000     
+    56              1                       2000     
+    59              1                     263329     
+    60              1                     263329     
+    64              1                       6000     
+    66              1                    ***0***     
+    68              1                       2000     
+    69              1                       2000     
+    72              1                       4000     
+    75              1                       2000     
+    77              1                    ***0***     
+    79              1                       2000     
+    83              1                    ***0***     
+    85              1                       2000     
+    86              1                       2000     
+    90              1                     301688     
+    91              1                     301688     
+    93              1                        842     
+    94              1                        842     
+    98              1                      98526     
+    99              1                      98526     
+    102             1                       1149     
+    103             1                       1149     
+    107             1                     201171     
+    108             1                     201171     
+    112             1                     100526     
+    113             1                     100526     
+    114             1                     100526     
+    116             1                          9     
+    118             1                     100517     
+    122             1                        149     
+    125             1                       5331     
+    126             1                       5331     
+    129             1                      10927     
+    132             1                       1000     
+    133             1                       1000     
+    136             1                      15258     
+    140             1                       4822     
+    141             1                       4822     
+    142             1                       4822     
+    143             1                       4822     
+    145             1                        999     
+    146             1                        999     
+    149             1                       3823     
+    150             1                       3823     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                         40        39         1    97.50%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /test_hdlc/u_dut/u_TxController --
+
+                                              Node      1H->0L      0L->1H                          "Coverage"
+                                              ---------------------------------------------------------------
+                                               Rst           0           1                               50.00 
+
+Total Node Count     =         24 
+Toggled Node Count   =         23 
+Untoggled Node Count =          1 
+
+Toggle Coverage      =      97.50% (39 of 40 bins)
+
+=================================================================================
+=== Instance: /test_hdlc/u_dut/u_TxBuff
+=== Design Unit: work.TxBuff
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        28        28         0   100.00%
+
+================================Branch Details================================
+
+Branch Coverage for instance /test_hdlc/u_dut/u_TxBuff
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/TxBuff.sv
+------------------------------------IF Branch------------------------------------
+    42                                    369723     Count coming in to IF
+    42              1                          2     
+    44              1                     369721     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    45                                    369721     Count coming in to IF
+    45              1                     130602     
+    47              1                       4001     
+                                          235118     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    53                                    473058     Count coming in to IF
+    53              1                          2     
+    55              1                     473056     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    56                                    473056     Count coming in to IF
+    56              1                       6001     
+    58              1                     233118     
+                                          233937     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    64                                    239121     Count coming in to IF
+    64              1                          2     
+    66              1                     239119     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    67                                    239119     Count coming in to IF
+    67              1                       2000     
+                                          237119     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    74                                     12003     Count coming in to IF
+    74              1                          2     
+    76              1                      12001     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------CASE Branch------------------------------------
+    82                                    473248     Count coming in to CASE
+    83              1                       4192     
+    99              1                     261204     
+    119             1                     207851     
+                                               1     All False Count
+Branch totals: 4 hits of 4 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    88                                      4192     Count coming in to IF
+    88              1                       2000     
+    93              1                       2192     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    100                                   261204     Count coming in to IF
+    100             1                         64     
+    102             1                     261140     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    108                                   261204     Count coming in to IF
+    108             1                       2000     
+    113             1                     259204     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    124                                   207851     Count coming in to IF
+    124             1                       2000     
+    129             1                     205851     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       7         5         2    71.42%
+
+================================Condition Details================================
+
+Condition Coverage for instance /test_hdlc/u_dut/u_TxBuff --
+
+  File ../rtl/TxBuff.sv
+----------------Focused Condition View-------------------
+Line       45 Item    1  ((WrBuff && ~Full) && ~DataAvail)
+Condition totals: 1 of 3 input terms covered = 33.33%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+      WrBuff         Y
+        Full         N  '_1' not hit             Hit '_1'
+   DataAvail         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  WrBuff_0              -                             
+  Row   2:          1  WrBuff_1              (~DataAvail && ~Full)         
+  Row   3:          1  Full_0                (~DataAvail && WrBuff)        
+  Row   4:    ***0***  Full_1                WrBuff                        
+  Row   5:          1  DataAvail_0           (WrBuff && ~Full)             
+  Row   6:    ***0***  DataAvail_1           (WrBuff && ~Full)             
+
+----------------Focused Condition View-------------------
+Line       47 Item    1  (CurrentState == IDLE)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       100 Item    1  (Count == 126)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       124 Item    1  ((Count == (FrameSize - 1)) || AbortedTrans)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+
+Expression Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Expressions                      1         1         0   100.00%
+
+================================Expression Details================================
+
+Expression Coverage for instance /test_hdlc/u_dut/u_TxBuff --
+
+  File ../rtl/TxBuff.sv
+----------------Focused Expression View-----------------
+Line       39 Item    1  (Count == 126)
+Expression totals: 1 of 1 input term covered = 100.00%
+
+
+FSM Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    FSM States                       3         3         0   100.00%
+    FSM Transitions                  4         3         1    75.00%
+
+================================FSM Details================================
+
+FSM Coverage for instance /test_hdlc/u_dut/u_TxBuff --
+
+FSM_ID: CurrentState
+    Current State Object : CurrentState
+    ----------------------
+    State Value MapInfo :
+    ---------------------
+Line          State Name               Value
+----          ----------               -----
+  83                IDLE                   0
+  99               WRITE                   1
+ 119                READ                   2
+    Covered States :
+    ----------------
+                   State           Hit_count
+                   -----           ---------
+                    IDLE                4003          
+                   WRITE                4000          
+                    READ                4000          
+    Covered Transitions :
+    ---------------------
+Line            Trans_ID           Hit_count          Transition          
+----            --------           ---------          ----------          
+  89                   0                2000          IDLE -> WRITE                 
+ 109                   1                2000          WRITE -> READ                 
+ 126                   3                2000          READ -> IDLE                  
+    Uncovered Transitions :
+    -----------------------
+Line            Trans_ID          Transition          
+----            --------          ----------          
+  75                   2          WRITE -> IDLE       
+
+
+    Summary                       Bins      Hits    Misses  Coverage
+    -------                       ----      ----    ------  --------
+        FSM States                   3         3         0   100.00%
+        FSM Transitions              4         3         1    75.00%
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      45        45         0   100.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /test_hdlc/u_dut/u_TxBuff --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/TxBuff.sv
+    38              1                     239120     
+    39              1                     237120     
+    41              1                     369723     
+    43              1                          2     
+    46              1                     130602     
+    48              1                       4001     
+    52              1                     473058     
+    54              1                          2     
+    57              1                       6001     
+    59              1                     233118     
+    63              1                     239121     
+    65              1                          2     
+    68              1                       2000     
+    73              1                      12003     
+    75              1                          2     
+    77              1                      12001     
+    81              1                     473248     
+    84              1                       4192     
+    85              1                       4192     
+    86              1                       4192     
+    89              1                       2000     
+    90              1                       2000     
+    91              1                       2000     
+    94              1                       2192     
+    95              1                       2192     
+    96              1                       2192     
+    101             1                         64     
+    103             1                     261140     
+    105             1                     261204     
+    106             1                     261204     
+    109             1                       2000     
+    110             1                       2000     
+    111             1                       2000     
+    114             1                     259204     
+    115             1                     259204     
+    116             1                     259204     
+    120             1                     207851     
+    121             1                     207851     
+    122             1                     207851     
+    125             1                       2000     
+    126             1                       2000     
+    127             1                       2000     
+    130             1                     205851     
+    131             1                     205851     
+    132             1                     205851     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                         94        89         5    94.68%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /test_hdlc/u_dut/u_TxBuff --
+
+                                              Node      1H->0L      0L->1H                          "Coverage"
+                                              ---------------------------------------------------------------
+                                          Count[7]           0           0                                0.00 
+                                      FrameSize[7]           0           0                                0.00 
+                                               Rst           0           1                               50.00 
+
+Total Node Count     =         50 
+Toggled Node Count   =         47 
+Untoggled Node Count =          3 
+
+Toggle Coverage      =      94.68% (89 of 94 bins)
+
+=================================================================================
+=== Instance: /test_hdlc/u_dut/u_TxFCS
+=== Design Unit: work.TxFCS
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        25        24         1    96.00%
+
+================================Branch Details================================
+
+Branch Coverage for instance /test_hdlc/u_dut/u_TxFCS
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/TxFCS.sv
+------------------------------------IF Branch------------------------------------
+    34                                   1438958     Count coming in to IF
+    34              1                          2     
+    41              1                    1438956     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------CASE Branch------------------------------------
+    42                                   1438956     Count coming in to CASE
+    43              1                     138138     
+    55              1                    1076816     
+    83              1                     211987     
+    98              1                       3409     
+    128             1                       8606     
+                                         ***0***     All False Count
+Branch totals: 5 hits of 6 branches = 83.33%
+
+------------------------------------IF Branch------------------------------------
+    50                                    138138     Count coming in to IF
+    50              1                       2000     
+    52              1                     136138     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    65                                   1076816     Count coming in to IF
+    65              1                     134602     
+    77              1                     942214     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    68                                    134602     Count coming in to IF
+    68              1                     132602     
+    72              1                       2000     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    86                                    211987     Count coming in to IF
+    86              1                     207687     
+    88              1                       4300     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    91                                    211987     Count coming in to IF
+    91              1                        861     
+    93              1                       1139     
+    95              1                     209987     
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    101                                     3409     Count coming in to IF
+    101             1                         21     
+    105             1                       1118     
+    116             1                       2270     
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    131                                     8606     Count coming in to IF
+    131             1                       1118     
+    135             1                       3186     
+    139             1                       4302     
+Branch totals: 3 hits of 3 branches = 100.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       4         4         0   100.00%
+
+================================Condition Details================================
+
+Condition Coverage for instance /test_hdlc/u_dut/u_TxFCS --
+
+  File ../rtl/TxFCS.sv
+----------------Focused Condition View-------------------
+Line       65 Item    1  (BitCounter == 7)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       68 Item    1  (FCSFrameCounter != (FrameSize + 1))
+Condition totals: 1 of 1 input term covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       91 Item    1  (ValidFrame ~| DataAvail)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+
+Expression Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Expressions                      6         6         0   100.00%
+
+================================Expression Details================================
+
+Expression Coverage for instance /test_hdlc/u_dut/u_TxFCS --
+
+  File ../rtl/TxFCS.sv
+-----------Focused Expression View (Bimodal)------------
+Line       57 Item    1  (DataBuff[FCSFrameCounter][BitCounter] ^ FCS_reg[15])
+Expression totals: 2 of 2 input terms covered = 100.00%
+
+-----------Focused Expression View (Bimodal)------------
+Line       59 Item    1  (FCS_reg[1] ^ FCS_reg[15])
+Expression totals: 2 of 2 input terms covered = 100.00%
+
+-----------Focused Expression View (Bimodal)------------
+Line       61 Item    1  (FCS_reg[14] ^ FCS_reg[15])
+Expression totals: 2 of 2 input terms covered = 100.00%
+
+
+FSM Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    FSM States                       5         5         0   100.00%
+    FSM Transitions                  8         7         1    87.50%
+
+================================FSM Details================================
+
+FSM Coverage for instance /test_hdlc/u_dut/u_TxFCS --
+
+FSM_ID: FCSstate
+    Current State Object : FCSstate
+    ----------------------
+    State Value MapInfo :
+    ---------------------
+Line          State Name               Value
+----          ----------               -----
+  43                IDLE                   0
+  55            CALC_FCS                   1
+  83                 RUN                   2
+  98                FCS1                   3
+ 128                FCS2                   4
+    Covered States :
+    ----------------
+                   State           Hit_count
+                   -----           ---------
+                    IDLE              138140          
+                CALC_FCS             1076816          
+                     RUN              211987          
+                    FCS1                3409          
+                    FCS2                8606          
+    Covered Transitions :
+    ---------------------
+Line            Trans_ID           Hit_count          Transition          
+----            --------           ---------          ----------          
+  51                   0                2000          IDLE -> CALC_FCS              
+  73                   1                2000          CALC_FCS -> RUN               
+  94                   3                1139          RUN -> FCS1                   
+  92                   4                 861          RUN -> IDLE                   
+ 106                   5                1118          FCS1 -> FCS2                  
+ 102                   6                  21          FCS1 -> IDLE                  
+ 132                   7                1118          FCS2 -> IDLE                  
+    Uncovered Transitions :
+    -----------------------
+Line            Trans_ID          Transition          
+----            --------          ----------          
+  37                   2          CALC_FCS -> IDLE    
+
+
+    Summary                       Bins      Hits    Misses  Coverage
+    -------                       ----      ----    ------  --------
+        FSM States                   5         5         0   100.00%
+        FSM Transitions              8         7         1    87.50%
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      63        63         0   100.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /test_hdlc/u_dut/u_TxFCS --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/TxFCS.sv
+    33              1                    1438958     
+    35              1                          2     
+    36              1                          2     
+    37              1                          2     
+    38              1                          2     
+    39              1                          2     
+    40              1                          2     
+    44              1                     138138     
+    45              1                     138138     
+    46              1                     138138     
+    47              1                     138138     
+    48              1                     138138     
+    49              1                     138138     
+    51              1                       2000     
+    53              1                     136138     
+    57              1                    1076816     
+    58              1                    1076816     
+    59              1                    1076816     
+    60              1                    1076816     
+    61              1                    1076816     
+    63              1                    1076816     
+    66              1                     134602     
+    67              1                     134602     
+    69              1                     132602     
+    70              1                     132602     
+    73              1                       2000     
+    74              1                       2000     
+    78              1                     942214     
+    79              1                     942214     
+    80              1                     942214     
+    84              1                     211987     
+    87              1                     207687     
+    89              1                       4300     
+    92              1                        861     
+    94              1                       1139     
+    96              1                     209987     
+    99              1                       3409     
+    102             1                         21     
+    103             1                         21     
+    106             1                       1118     
+    107             1                       1118     
+    108             1                       1118     
+    109             1                       1118     
+    110             1                       1118     
+    111             1                       1118     
+    112             1                       1118     
+    113             1                       1118     
+    114             1                       1118     
+    117             1                       2270     
+    118             1                       2270     
+    119             1                       2270     
+    120             1                       2270     
+    121             1                       2270     
+    122             1                       2270     
+    123             1                       2270     
+    124             1                       2270     
+    125             1                       2270     
+    129             1                       8606     
+    132             1                       1118     
+    133             1                       1118     
+    136             1                       3186     
+    137             1                       3186     
+    140             1                       4302     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        121       118         3    97.52%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /test_hdlc/u_dut/u_TxFCS --
+
+                                              Node      1H->0L      0L->1H                          "Coverage"
+                                              ---------------------------------------------------------------
+                                      FrameSize[7]           0           0                                0.00 
+                                               Rst           0           1                               50.00 
+
+Total Node Count     =         63 
+Toggled Node Count   =         61 
+Untoggled Node Count =          2 
+
+Toggle Coverage      =      97.52% (118 of 121 bins)
+
+=================================================================================
+=== Instance: /test_hdlc/u_dut/u_TxChannel
+=== Design Unit: work.TxChannel
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        22        20         2    90.90%
+
+================================Branch Details================================
+
+Branch Coverage for instance /test_hdlc/u_dut/u_TxChannel
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/TxChannel.sv
+------------------------------------IF Branch------------------------------------
+    31                                    876288     Count coming in to IF
+    31              1                          2     
+    37              1                     876286     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    38                                    876286     Count coming in to IF
+    38              1                     876286     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    40                                    876286     Count coming in to IF
+    40              1                     859295     
+    61              1                      16991     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    41                                    859295     Count coming in to IF
+    41              1                      13541     
+    46              1                     845754     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    47                                    845754     Count coming in to IF
+    47              1                     105007     
+    53              1                     740747     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    62                                     16991     Count coming in to IF
+    62              1                       2000     
+    64              1                      14991     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    76                                    875226     Count coming in to IF
+    76              1                          2     
+    81              1                     875224     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------CASE Branch------------------------------------
+    82                                    875224     Count coming in to CASE
+    83              1                      16609     
+    95              1                     858615     
+                                         ***0***     All False Count
+Branch totals: 2 hits of 3 branches = 66.66%
+
+------------------------------------IF Branch------------------------------------
+    86                                     16609     Count coming in to IF
+    86              1                       2000     
+    90              1                      14609     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    97                                    858615     Count coming in to IF
+    97              1                       1000     
+    102             1                       1000     
+    107             1                     856615     
+Branch totals: 3 hits of 3 branches = 100.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       3         2         1    66.66%
+
+================================Condition Details================================
+
+Condition Coverage for instance /test_hdlc/u_dut/u_TxChannel --
+
+  File ../rtl/TxChannel.sv
+----------------Focused Condition View-------------------
+Line       47 Item    1  (ZeroCounter == 7)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       86 Item    1  (ValidFrame && ~AbortedTrans)
+Condition totals: 1 of 2 input terms covered = 50.00%
+
+    Input Term   Covered  Reason for no coverage   Hint
+   -----------  --------  -----------------------  --------------
+    ValidFrame         Y
+  AbortedTrans         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  ValidFrame_0          -                             
+  Row   2:          1  ValidFrame_1          ~AbortedTrans                 
+  Row   3:          1  AbortedTrans_0        ValidFrame                    
+  Row   4:    ***0***  AbortedTrans_1        ValidFrame                    
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      41        41         0   100.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /test_hdlc/u_dut/u_TxChannel --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/TxChannel.sv
+    28              1                     840381     
+    30              1                     876288     
+    32              1                          2     
+    33              1                          2     
+    34              1                          2     
+    35              1                          2     
+    39              1                     876286     
+    42              1                      13541     
+    43              1                      13541     
+    44              1                      13541     
+    48              1                     105007     
+    49              1                     105007     
+    50              1                     105007     
+    51              1                     105007     
+    54              1                     740747     
+    55              1                     740747     
+    56              1                     740747     
+    57              1                     740747     
+    63              1                       2000     
+    65              1                      14991     
+    67              1                      16991     
+    68              1                      16991     
+    69              1                      16991     
+    75              1                     875226     
+    77              1                          2     
+    78              1                          2     
+    79              1                          2     
+    84              1                      16609     
+    87              1                       2000     
+    88              1                       2000     
+    91              1                      14609     
+    92              1                      14609     
+    98              1                       1000     
+    99              1                       1000     
+    100             1                       1000     
+    103             1                       1000     
+    104             1                       1000     
+    105             1                       1000     
+    108             1                     856615     
+    109             1                     856615     
+    110             1                     856615     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                         92        89         3    96.73%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /test_hdlc/u_dut/u_TxChannel --
+
+                                              Node      1H->0L      0L->1H                          "Coverage"
+                                              ---------------------------------------------------------------
+                                               Rst           0           1                               50.00 
+                                              TxEN           0           0                                0.00 
+
+Total Node Count     =         46 
+Toggled Node Count   =         44 
+Untoggled Node Count =          2 
+
+Toggle Coverage      =      96.73% (89 of 92 bins)
+
+=================================================================================
+=== Instance: /test_hdlc/u_dut/u_RxController
+=== Design Unit: work.RxController
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        35        33         2    94.28%
+
+================================Branch Details================================
+
+Branch Coverage for instance /test_hdlc/u_dut/u_RxController
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/RxController.sv
+------------------------------------IF Branch------------------------------------
+    44                                    143959     Count coming in to IF
+    44              1                          2     
+    50              1                     143957     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    51                                    143957     Count coming in to IF
+    51              1                       7000     
+    59              1                      13000     
+    70              1                       7000     
+    74              1                      42000     
+    77              1                      74957     
+Branch totals: 5 hits of 5 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    54                                      7000     Count coming in to IF
+    54              1                       1000     
+    56              1                       6000     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    60                                     13000     Count coming in to IF
+    60              1                       7000     
+    65              1                       6000     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    87                                   1659600     Count coming in to IF
+    87              1                          2     
+    92              1                    1659598     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------CASE Branch------------------------------------
+    93                                   1659598     Count coming in to CASE
+    94              1                      36001     
+    103             1                    1611547     
+    126             1                      12050     
+                                         ***0***     All False Count
+Branch totals: 3 hits of 4 branches = 75.00%
+
+------------------------------------IF Branch------------------------------------
+    98                                     36001     Count coming in to IF
+    98              1                       7000     
+    100             1                      29001     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    106                                  1611547     Count coming in to IF
+    106             1                    1605547     
+    120             1                       6000     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    107                                  1605547     Count coming in to IF
+    107             1                       1000     
+    109             1                    1604547     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    111                                  1605547     Count coming in to IF
+    111             1                     532323     
+    113             1                       1000     
+    117             1                    1072224     
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    127                                    12050     Count coming in to IF
+    127             1                      11050     
+    132             1                       1000     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    129                                    11050     Count coming in to IF
+    129             1                    ***0***     
+                                           11050     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    142                                    31959     Count coming in to IF
+    142             1                          2     
+    144             1                      31957     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    145                                    31957     Count coming in to IF
+    145             1                       3000     
+    147             1                      13000     
+                                           15957     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       8         5         3    62.50%
+
+================================Condition Details================================
+
+Condition Coverage for instance /test_hdlc/u_dut/u_RxController --
+
+  File ../rtl/RxController.sv
+----------------Focused Condition View-------------------
+Line       70 Item    1  (FlagCounter == 7)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       74 Item    1  (FlagCounter > 0)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       113 Item    1  (FlagDetect && ~NewByte)
+Condition totals: 1 of 2 input terms covered = 50.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+  FlagDetect         Y
+     NewByte         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  FlagDetect_0          -                             
+  Row   2:          1  FlagDetect_1          ~NewByte                      
+  Row   3:          1  NewByte_0             FlagDetect                    
+  Row   4:    ***0***  NewByte_1             FlagDetect                    
+
+----------------Focused Condition View-------------------
+Line       129 Item    1  (FlagDetect && ~NewByte)
+Condition totals: 0 of 2 input terms covered = 0.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+  FlagDetect         N  '_1' not hit             Hit '_1'
+     NewByte         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  FlagDetect_0          -                             
+  Row   2:    ***0***  FlagDetect_1          ~NewByte                      
+  Row   3:    ***0***  NewByte_0             FlagDetect                    
+  Row   4:          1  NewByte_1             FlagDetect                    
+
+----------------Focused Condition View-------------------
+Line       145 Item    1  (NonByteAlignedError || FCSerror)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+
+Expression Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Expressions                      5         5         0   100.00%
+
+================================Expression Details================================
+
+Expression Coverage for instance /test_hdlc/u_dut/u_RxController --
+
+  File ../rtl/RxController.sv
+----------------Focused Expression View-----------------
+Line       39 Item    1  ((FrameStatusReg[0] || StartZeroDetect) && FrameStatusReg[5])
+Expression totals: 3 of 3 input terms covered = 100.00%
+
+----------------Focused Expression View-----------------
+Line       40 Item    1  (FrameStatus && FlagDetect)
+Expression totals: 2 of 2 input terms covered = 100.00%
+
+
+FSM Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    FSM States                       3         3         0   100.00%
+    FSM Transitions                  4         4         0   100.00%
+
+================================FSM Details================================
+
+FSM Coverage for instance /test_hdlc/u_dut/u_RxController --
+
+FSM_ID: Controlstate
+    Current State Object : Controlstate
+    ----------------------
+    State Value MapInfo :
+    ---------------------
+Line          State Name               Value
+----          ----------               -----
+  94                IDLE                   0
+ 103                WAIT                   1
+ 126            OVERFLOW                   2
+    Covered States :
+    ----------------
+                   State           Hit_count
+                   -----           ---------
+                    IDLE               36003          
+                    WAIT             1611547          
+                OVERFLOW               12050          
+    Covered Transitions :
+    ---------------------
+Line            Trans_ID           Hit_count          Transition          
+----            --------           ---------          ----------          
+  99                   0                7000          IDLE -> WAIT                  
+ 122                   1                6000          WAIT -> IDLE                  
+ 108                   2                1000          WAIT -> OVERFLOW              
+ 133                   3                1000          OVERFLOW -> IDLE              
+
+
+    Summary                       Bins      Hits    Misses  Coverage
+    -------                       ----      ----    ------  --------
+        FSM States                   3         3         0   100.00%
+        FSM Transitions              4         4         0   100.00%
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      51        50         1    98.03%
+
+================================Statement Details================================
+
+Statement Coverage for instance /test_hdlc/u_dut/u_RxController --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/RxController.sv
+    39              1                      35002     
+    40              1                      42959     
+    43              1                     143959     
+    45              1                          2     
+    46              1                          2     
+    47              1                          2     
+    48              1                          2     
+    49              1                          2     
+    52              1                       7000     
+    53              1                       7000     
+    55              1                       1000     
+    57              1                       6000     
+    61              1                       7000     
+    62              1                       7000     
+    63              1                       7000     
+    66              1                       6000     
+    67              1                       6000     
+    71              1                       7000     
+    72              1                       7000     
+    75              1                      42000     
+    78              1                      74957     
+    80              1                     143957     
+    81              1                     143957     
+    86              1                    1659600     
+    88              1                          2     
+    89              1                          2     
+    90              1                          2     
+    91              1                          2     
+    95              1                      36001     
+    96              1                      36001     
+    97              1                      36001     
+    99              1                       7000     
+    101             1                      29001     
+    104             1                    1611547     
+    108             1                       1000     
+    110             1                    1604547     
+    112             1                     532323     
+    114             1                       1000     
+    115             1                       1000     
+    118             1                    1072224     
+    121             1                       6000     
+    122             1                       6000     
+    123             1                       6000     
+    128             1                      11050     
+    130             1                    ***0***     
+    133             1                       1000     
+    134             1                       1000     
+    141             1                      31959     
+    143             1                          2     
+    146             1                       3000     
+    148             1                      13000     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                         59        58         1    98.30%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /test_hdlc/u_dut/u_RxController --
+
+                                              Node      1H->0L      0L->1H                          "Coverage"
+                                              ---------------------------------------------------------------
+                                               Rst           0           1                               50.00 
+
+Total Node Count     =         31 
+Toggled Node Count   =         30 
+Untoggled Node Count =          1 
+
+Toggle Coverage      =      98.30% (58 of 59 bins)
+
+=================================================================================
+=== Instance: /test_hdlc/u_dut/u_RxBuff
+=== Design Unit: work.RxBuff
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        33        33         0   100.00%
+
+================================Branch Details================================
+
+Branch Coverage for instance /test_hdlc/u_dut/u_RxBuff
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/RxBuff.sv
+------------------------------------IF Branch------------------------------------
+    41                                   1467839     Count coming in to IF
+    41              1                          2     
+    43              1                    1467837     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    44                                   1467837     Count coming in to IF
+    44              1                     531323     
+    48              1                     545662     
+    51              1                     390852     
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    58                                   1463585     Count coming in to IF
+    58              1                          2     
+    60              1                    1463583     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    61                                   1463583     Count coming in to IF
+    61              1                      16863     
+    63              1                     722614     
+                                          724106     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    69                                    737124     Count coming in to IF
+    69              1                          2     
+    71              1                     737122     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    72                                    737122     Count coming in to IF
+    72              1                       5000     
+                                          732122     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    78                                     36373     Count coming in to IF
+    78              1                          2     
+    80              1                      36371     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------CASE Branch------------------------------------
+    86                                   2218345     Count coming in to CASE
+    87              1                     561648     
+    102             1                    1075793     
+    132             1                     580902     
+                                               2     All False Count
+Branch totals: 4 hits of 4 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    91                                    561648     Count coming in to IF
+    91              1                       6508     
+    96              1                     555140     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    103                                  1075793     Count coming in to IF
+    103             1                       6872     
+    109             1                    1068921     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    104                                     6872     Count coming in to IF
+    104             1                       1000     
+                                            5872     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    114                                  1075793     Count coming in to IF
+    114             1                       2507     
+    119             1                       5000     
+    125             1                    1068286     
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    136                                   580902     Count coming in to IF
+    136             1                       6000     
+    142             1                     574902     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    144                                   574902     Count coming in to IF
+    144             1                        999     
+    150             1                     573903     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       7         6         1    85.71%
+
+================================Condition Details================================
+
+Condition Coverage for instance /test_hdlc/u_dut/u_RxBuff --
+
+  File ../rtl/RxBuff.sv
+----------------Focused Condition View-------------------
+Line       44 Item    1  (WrBuff && ~Overflow)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       103 Item    1  (Count == 128)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       136 Item    1  ((((Count == FrameSize) || Drop) || FrameError) || AbortedFrame)
+Condition totals: 3 of 4 input terms covered = 75.00%
+
+            Input Term   Covered  Reason for no coverage   Hint
+           -----------  --------  -----------------------  --------------
+  (Count == FrameSize)         Y
+                  Drop         Y
+            FrameError         N  '_1' not hit             Hit '_1'
+          AbortedFrame         Y
+
+     Rows:       Hits  FEC Target              Non-masking condition(s)      
+ ---------  ---------  --------------------    -------------------------     
+  Row   1:          1  (Count == FrameSize)_0  (~AbortedFrame && ~FrameError && ~Drop)
+  Row   2:          1  (Count == FrameSize)_1  -                             
+  Row   3:          1  Drop_0                  (~AbortedFrame && ~FrameError && ~(Count == FrameSize))
+  Row   4:          1  Drop_1                  ~(Count == FrameSize)         
+  Row   5:          1  FrameError_0            (~AbortedFrame && ~((Count == FrameSize) || Drop))
+  Row   6:    ***0***  FrameError_1            ~((Count == FrameSize) || Drop)
+  Row   7:          1  AbortedFrame_0          ~(((Count == FrameSize) || Drop) || FrameError)
+  Row   8:          1  AbortedFrame_1          ~(((Count == FrameSize) || Drop) || FrameError)
+
+
+FSM Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    FSM States                       3         3         0   100.00%
+    FSM Transitions                  5         5         0   100.00%
+
+================================FSM Details================================
+
+FSM Coverage for instance /test_hdlc/u_dut/u_RxBuff --
+
+FSM_ID: CurrentState
+    Current State Object : CurrentState
+    ----------------------
+    State Value MapInfo :
+    ---------------------
+Line          State Name               Value
+----          ----------               -----
+  87                IDLE                   0
+ 102               WRITE                   1
+ 132                READ                   2
+    Covered States :
+    ----------------
+                   State           Hit_count
+                   -----           ---------
+                    IDLE               12866          
+                   WRITE               14507          
+                    READ                9000          
+    Covered Transitions :
+    ---------------------
+Line            Trans_ID           Hit_count          Transition          
+----            --------           ---------          ----------          
+  92                   0                6508          IDLE -> WRITE                 
+ 121                   1                5000          WRITE -> READ                 
+ 116                   2                2507          WRITE -> IDLE                 
+ 145                   3                 999          READ -> WRITE                 
+ 139                   4                4000          READ -> IDLE                  
+
+
+    Summary                       Bins      Hits    Misses  Coverage
+    -------                       ----      ----    ------  --------
+        FSM States                   3         3         0   100.00%
+        FSM Transitions              5         5         0   100.00%
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      54        54         0   100.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /test_hdlc/u_dut/u_RxBuff --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/RxBuff.sv
+    40              1                    1467839     
+    42              1                          2     
+    45              1                     531323     
+    46              1                     531323     
+    49              1                     545662     
+    52              1                     390852     
+    57              1                    1463585     
+    59              1                          2     
+    62              1                      16863     
+    64              1                     722614     
+    68              1                     737124     
+    70              1                          2     
+    73              1                       5000     
+    77              1                      36373     
+    79              1                          2     
+    81              1                      36371     
+    85              1                    2218345     
+    88              1                     561648     
+    89              1                     561648     
+    90              1                     561648     
+    92              1                       6508     
+    93              1                       6508     
+    94              1                       6508     
+    97              1                     555140     
+    98              1                     555140     
+    99              1                     555140     
+    105             1                       1000     
+    107             1                       6872     
+    110             1                    1068921     
+    111             1                    1068921     
+    115             1                       2507     
+    116             1                       2507     
+    117             1                       2507     
+    120             1                       5000     
+    121             1                       5000     
+    122             1                       5000     
+    123             1                       5000     
+    126             1                    1068286     
+    127             1                    1068286     
+    128             1                    1068286     
+    129             1                    1068286     
+    133             1                     580902     
+    134             1                     580902     
+    137             1                       6000     
+    138             1                       6000     
+    139             1                       6000     
+    140             1                       6000     
+    143             1                     574902     
+    145             1                        999     
+    146             1                        999     
+    147             1                        999     
+    148             1                        999     
+    151             1                     573903     
+    152             1                     573903     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                         98        95         3    96.93%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /test_hdlc/u_dut/u_RxBuff --
+
+                                              Node      1H->0L      0L->1H                          "Coverage"
+                                              ---------------------------------------------------------------
+                                      FrameSize[7]           0           0                                0.00 
+                                               Rst           0           1                               50.00 
+
+Total Node Count     =         52 
+Toggled Node Count   =         50 
+Untoggled Node Count =          2 
+
+Toggle Coverage      =      96.93% (95 of 98 bins)
+
+=================================================================================
+=== Instance: /test_hdlc/u_dut/u_RxFCS
+=== Design Unit: work.RxFCS
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        11        10         1    90.90%
+
+================================Branch Details================================
+
+Branch Coverage for instance /test_hdlc/u_dut/u_RxFCS
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/RxFCS.sv
+------------------------------------IF Branch------------------------------------
+    27                                   4401581     Count coming in to IF
+    27              1                          2     
+    32              1                    4401579     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------CASE Branch------------------------------------
+    33                                   4401579     Count coming in to CASE
+    34              1                      51903     
+    48              1                    4349676     
+                                         ***0***     All False Count
+Branch totals: 2 hits of 3 branches = 66.66%
+
+------------------------------------IF Branch------------------------------------
+    35                                     51903     Count coming in to IF
+    35              1                       6000     
+    41              1                      45903     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    49                                   4349676     Count coming in to IF
+    49              1                       6000     
+    53              1                    4343676     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    58                                   4343676     Count coming in to IF
+    58              1                      72350     
+    61              1                    4271326     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+
+Expression Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Expressions                      8         8         0   100.00%
+
+================================Expression Details================================
+
+Expression Coverage for instance /test_hdlc/u_dut/u_RxFCS --
+
+  File ../rtl/RxFCS.sv
+----------------Focused Expression View-----------------
+Line       51 Item    1  (FCSen && |FCS_reg)
+Expression totals: 2 of 2 input terms covered = 100.00%
+
+-----------Focused Expression View (Bimodal)------------
+Line       62 Item    1  (Rx ^ FCS_reg[15])
+Expression totals: 2 of 2 input terms covered = 100.00%
+
+-----------Focused Expression View (Bimodal)------------
+Line       64 Item    1  (FCS_reg[1] ^ FCS_reg[15])
+Expression totals: 2 of 2 input terms covered = 100.00%
+
+-----------Focused Expression View (Bimodal)------------
+Line       66 Item    1  (FCS_reg[14] ^ FCS_reg[15])
+Expression totals: 2 of 2 input terms covered = 100.00%
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      25        25         0   100.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /test_hdlc/u_dut/u_RxFCS --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/RxFCS.sv
+    26              1                    4401581     
+    28              1                          2     
+    29              1                          2     
+    30              1                          2     
+    31              1                          2     
+    36              1                       6000     
+    37              1                       6000     
+    38              1                       6000     
+    39              1                       6000     
+    42              1                      45903     
+    43              1                      45903     
+    44              1                      45903     
+    46              1                      51903     
+    50              1                       6000     
+    51              1                       6000     
+    54              1                    4343676     
+    55              1                    4343676     
+    56              1                    4343676     
+    57              1                    4343676     
+    59              1                      72350     
+    62              1                    4271326     
+    63              1                    4271326     
+    64              1                    4271326     
+    65              1                    4271326     
+    66              1                    4271326     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                         58        57         1    98.27%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /test_hdlc/u_dut/u_RxFCS --
+
+                                              Node      1H->0L      0L->1H                          "Coverage"
+                                              ---------------------------------------------------------------
+                                               Rst           0           1                               50.00 
+
+Total Node Count     =         30 
+Toggled Node Count   =         29 
+Untoggled Node Count =          1 
+
+Toggle Coverage      =      98.27% (57 of 58 bins)
+
+=================================================================================
+=== Instance: /test_hdlc/u_dut/u_RxChannel
+=== Design Unit: work.RxChannel
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        14        14         0   100.00%
+
+================================Branch Details================================
+
+Branch Coverage for instance /test_hdlc/u_dut/u_RxChannel
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/RxChannel.sv
+------------------------------------IF Branch------------------------------------
+    33                                   4439260     Count coming in to IF
+    33              1                          2     
+    39              1                    4439258     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    40                                   4439258     Count coming in to IF
+    40              1                    4392256     
+    68              1                      47002     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    41                                   4392256     Count coming in to IF
+    41              1                    4385256     
+    45              1                       7000     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    52                                   4392256     Count coming in to IF
+    52              1                      68406     
+    55              1                    4323850     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    56                                   4323850     Count coming in to IF
+    56              1                     537270     
+    60              1                    3786580     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    65                                   4392256     Count coming in to IF
+    65              1                     536941     
+                                         3855315     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    77                                   4501943     Count coming in to IF
+    77              1                          2     
+    82              1                    4501941     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       1         1         0   100.00%
+
+================================Condition Details================================
+
+Condition Coverage for instance /test_hdlc/u_dut/u_RxChannel --
+
+  File ../rtl/RxChannel.sv
+----------------Focused Condition View-------------------
+Line       56 Item    1  (BitCounter == 7)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+
+Expression Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Expressions                      7         7         0   100.00%
+
+================================Expression Details================================
+
+Expression Coverage for instance /test_hdlc/u_dut/u_RxChannel --
+
+  File ../rtl/RxChannel.sv
+----------------Focused Expression View-----------------
+Line       30 Item    1  (~RxD && &CheckReg[5:1])
+Expression totals: 2 of 2 input terms covered = 100.00%
+
+----------------Focused Expression View-----------------
+Line       83 Item    1  ((~ShiftReg[0] && &ShiftReg[6:1]) && ~ShiftReg[7])
+Expression totals: 3 of 3 input terms covered = 100.00%
+
+----------------Focused Expression View-----------------
+Line       84 Item    1  (~ShiftReg[0] && &ShiftReg[7:1])
+Expression totals: 2 of 2 input terms covered = 100.00%
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      31        31         0   100.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /test_hdlc/u_dut/u_RxChannel --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/RxChannel.sv
+    30              1                    4371808     
+    32              1                    4439260     
+    34              1                          2     
+    35              1                          2     
+    36              1                          2     
+    37              1                          2     
+    38              1                          2     
+    42              1                    4385256     
+    43              1                    4385256     
+    46              1                       7000     
+    47              1                       7000     
+    48              1                       7000     
+    50              1                    4392256     
+    53              1                      68406     
+    57              1                     537270     
+    58              1                     537270     
+    61              1                    3786580     
+    62              1                    3786580     
+    66              1                     536941     
+    69              1                      47002     
+    70              1                      47002     
+    76              1                    4501943     
+    78              1                          2     
+    79              1                          2     
+    80              1                          2     
+    81              1                          2     
+    83              1                    4501941     
+    84              1                    4501941     
+    86              1                    4501941     
+    87              1                    4501941     
+    89              1                    4501941     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                         88        85         3    96.59%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /test_hdlc/u_dut/u_RxChannel --
+
+                                              Node      1H->0L      0L->1H                          "Coverage"
+                                              ---------------------------------------------------------------
+                                               Rst           0           1                               50.00 
+                                              RxEN           0           0                                0.00 
+
+Total Node Count     =         44 
+Toggled Node Count   =         42 
+Untoggled Node Count =          2 
+
+Toggle Coverage      =      96.59% (85 of 88 bins)
+
+=================================================================================
+=== Instance: /test_hdlc/u_dut
+=== Design Unit: work.Hdlc
+=================================================================================
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        230       221         9    96.08%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /test_hdlc/u_dut --
+
+                                              Node      1H->0L      0L->1H                          "Coverage"
+                                              ---------------------------------------------------------------
+                                               Rst           0           1                               50.00 
+                                              RxEN           0           0                                0.00 
+                                   Rx_FrameSize[7]           0           0                                0.00 
+                                              TxEN           0           0                                0.00 
+                                   Tx_FrameSize[7]           0           0                                0.00 
+
+Total Node Count     =        115 
+Toggled Node Count   =        110 
+Untoggled Node Count =          5 
+
+Toggle Coverage      =      96.08% (221 of 230 bins)
+
+
+Total Coverage By Instance (filtered view): 91.78%
+
+End time: 21:38:32 on Apr 23,2026, Elapsed time: 0:00:01
+Errors: 0, Warnings: 0

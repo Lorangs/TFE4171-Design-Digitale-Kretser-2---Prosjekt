@@ -62,7 +62,7 @@
 
 `define BUFFER_SIZE         128  // Size of Rx_Buff and Tx_Buff in bytes
 `define FCS_SIZE            2    // Size of FCS in bytes
-`define NUM_RANDOM_TESTS    10   // Number of random tests to perform for each test case in the test program
+`define NUM_RANDOM_TESTS    1000   // Number of random tests to perform for each test case in the test program
 `define MAX_OVERFLOW_BYTES   10
 
 `define START_END_FLAG      8'b01111110
@@ -190,7 +190,7 @@ program testPr_hdlc(
     else
       uin_hdlc.Rx = 1'b1;
   endtask
-
+ 
   task GenerateRxStimulus(int Size, logic FCSerr, output logic[127:0][7:0] RxData);
     logic [15:0] FCSBytes;
     logic [15:0] FCSErrByte;
@@ -284,7 +284,7 @@ program testPr_hdlc(
     @(posedge uin_hdlc.Clk);
     uin_hdlc.Rx = 1'b1;
 
-    repeat(8)
+    repeat(8) // Trust me, ok?
       @(posedge uin_hdlc.Clk);
 
     if(Abort)
@@ -335,29 +335,18 @@ program testPr_hdlc(
     VerifyTxFull(Size);
 
     //Start transmission
-    WriteAddress(`Tx_SC_ADDR, 8'h02);
+    WriteAddress(`Tx_SC_ADDR, 8'h02); // Enable transmission
+    fork
+      ReadTransmittedData(Size+`FCS_SIZE, Abort, TransmittedData);
+      WaitAndVerifyTxDone(Size, Abort);
+    join
 
-    if (Abort) begin
-      // Let transmission start, then issue abort
-      wait(!uin_hdlc.Tx_Done);  // Wait for transmission to actually start
-      repeat(5)
-        @(posedge uin_hdlc.Clk);
-      WriteAddress(`Tx_SC_ADDR, 8'h04);
-
-      repeat(20)
-        @(posedge uin_hdlc.Clk);
-
-      VerifyAbortTransmit();
+    repeat(2)     // Need time to 
+      @(posedge uin_hdlc.Clk);
+    if (!Abort) begin
+      VerifyNormalTransmit(WrittenData, TransmittedData, FCSBytes, Size);
     end else begin
-      fork
-        ReadTransmittedData(Size+2, Abort, TransmittedData);
-        WaitAndVerifyTxDone(Size, Abort);
-      join
-
-      repeat(8)
-        @(posedge uin_hdlc.Clk);
-
-      VerfiyNormalTransmit(WrittenData, TransmittedData, FCSBytes, Size);
+      VerifyAbortTransmit();
     end
 
     #`WAIT_TIME_ns;
@@ -368,6 +357,13 @@ program testPr_hdlc(
     int ones_cnt;
     int bit_idx, byte_idx;
     logic bit_val;
+    int abort_at_byte;
+
+    if (Abort) begin
+      abort_at_byte = $urandom_range(1, Size - 1); // Abort after this many bytes received
+    end else begin
+      abort_at_byte = -1;
+    end
 
     TransmittedData = '0;
     flag_shift = '1;
@@ -385,6 +381,13 @@ program testPr_hdlc(
     byte_idx = 0;
 
     while (byte_idx < Size) begin
+      // Issue abort at byte boundary, then break out of read loop
+      if (Abort && byte_idx == abort_at_byte && bit_idx == 0) begin
+        $display("Event %t: Issuing TX abort at byte %0d of %0d", $time, byte_idx, Size);
+        WriteAddress(`Tx_SC_ADDR, 8'h04); // Set Tx_AbortFrame bit
+        break;
+      end
+
       @(posedge uin_hdlc.Clk);
       bit_val = uin_hdlc.Tx;
 
@@ -416,29 +419,31 @@ program testPr_hdlc(
       end
     end
 
-    // Continue reading after data to detect end flag
-    if (byte_idx >= Size) begin
-      while (1) begin
-        @(posedge uin_hdlc.Clk);
-        bit_val = uin_hdlc.Tx;
-        if (bit_val) begin
-          ones_cnt++;
-          if (ones_cnt >= 7) break;
-        end else begin
-          if (ones_cnt == 5)
-            ones_cnt = 0;
-          else if (ones_cnt == 6)
-            break;
-          else
-            ones_cnt = 0;
+    if (!Abort) begin
+      // Continue reading after data to detect end flag
+      if (byte_idx >= Size) begin
+        while (1) begin
+          @(posedge uin_hdlc.Clk);
+          bit_val = uin_hdlc.Tx;
+          if (bit_val) begin
+            ones_cnt++;
+            if (ones_cnt >= 7) break;
+          end else begin
+            if (ones_cnt == 5)
+              ones_cnt = 0;
+            else if (ones_cnt == 6)
+              break;
+            else
+              ones_cnt = 0;
+          end
         end
       end
-    end
 
-    // Verify end flag was detected - Spec 5
-    assert(ones_cnt == 6) else begin
-      $error("ReadTransmittedData: End flag (01111110) not detected after TX data");
-      TbErrorCnt++;
+      // Verify end flag was detected - Spec 5
+      assert(ones_cnt == 6) else begin
+        $error("ReadTransmittedData: End flag (01111110) not detected after TX data");
+        TbErrorCnt++;
+      end
     end
   endtask
 
@@ -751,7 +756,7 @@ program testPr_hdlc(
     end
   endtask
 
-  task VerfiyNormalTransmit(logic [127:0][7:0] WrittenData, logic [127:0][7:0] TransmittedData, logic [15:0] FCSBytes, int Size);
+  task VerifyNormalTransmit(logic [127:0][7:0] WrittenData, logic [127:0][7:0] TransmittedData, logic [15:0] FCSBytes, int Size);
     logic [7:0] TxStatusControl;
 
     // Spec 4: Verify transmitted data matches written TX buffer
