@@ -44,9 +44,9 @@ module assertions_hdlc (
   end
 
 
-  // start and end of frame pattern: 8'h7E = 8'b01111110
+  // start and end of frame pattern: 8'h7E = 8'b01111110 - Spec 12
   sequence start_end_pattern;
-    (Rx == 'h7E);
+    !Rx ##1 Rx [*6] ##1 !Rx;
   endsequence;
 
   // Check if flag sequence is detected
@@ -54,64 +54,74 @@ module assertions_hdlc (
     @(posedge Clk) start_end_pattern |-> ##2 Rx_FlagDetect;
   endproperty
 
-  start_end_detected_assert : assert property (start_end_detected) begin
-    $display("PASS: Flag detect");
-  end else begin 
+  start_end_detected_assert : assert property (start_end_detected) else begin 
     $error("Flag sequence did not generate FlagDetect"); 
     ErrCntAssertions++; 
   end
 
 
-  // Abort pattern: 8'hFE = 8'b11111110
+  // Abort pattern: 8'hFE = 8'b11111110 - Spec 10
   sequence rx_abort_pattern;
-    (Rx == 'hFE);
+    !Rx ##1 Rx [*7];
   endsequence;
 
   // Check if abort pattern is detected and abort signal is generated
   property rx_abort_detected;
-    @(posedge Clk) rx_abort_pattern |-> Rx_AbortDetect;
+    Rx_ValidFrame [*8] and rx_abort_pattern |-> ##2 Rx_AbortDetect |-> ##1 Rx_AbortSignal;
   endproperty
   
-  rx_abort_detected_assert : assert property (rx_abort_detected) begin
-    $display("PASS: Abort signal");
-  end else begin 
+  rx_abort_detected_assert : assert property(@(posedge Clk) rx_abort_detected) else begin 
     $error("AbortSignal did not go high after AbortDetect during validframe"); 
     ErrCntAssertions++; 
   end
 
- 
 
- // Idle pattern: 8'b11111111
+ // Idle pattern: 8'b11111111 - Spec 7
   sequence rx_idle_pattern;
-    (Rx == 'hFF);
+    Rx [*8];
   endsequence;
 
   property rx_idle_detected;
-    rx_idle_pattern |-> !Rx_ValidFrame;
+    rx_idle_pattern |-> ##1 !Rx_ValidFrame;
   endproperty;
 
   rx_idle_detected_assert:  assert property(@(posedge Clk) disable iff(Rx_AbortDetect || !Rst) rx_idle_detected) else begin
     $error("ERROR: Rx did not correctly generate idle pattern.");
     ErrCntAssertions++;
   end
+
+  sequence tx_idle_pattern;
+    Tx [*8];
+  endsequence;
   
-  property tx_idle_pattern;
-    $fell(Tx_ValidFrame) and !Tx_AbortedTrans |-> ##9 Tx;
+  // wait 9 cycles after Tx_ValidFrame 
+  property tx_idle_generation;
+    $fell(Tx_ValidFrame) and !Tx_AbortedTrans |-> ##9 tx_idle_pattern;
   endproperty;
 
-  tx_idle_assertion:  assert property(@(posedge Clk) disable iff(!Rst) tx_idle_pattern) else begin
+  tx_idle_assertion:  assert property(@(posedge Clk) disable iff(!Rst) tx_idle_generation) else begin
     $error("ERROR: Tx did not generate idle pattern properly");
     ErrCntAssertions++;
   end
 
-  // Verifiserer Tx abort pattern (spec 8) - only when mid-transmission
-  property tx_abort_pattern;
-    $rose(Tx_AbortedTrans) and $past(Tx_ValidFrame) |-> ##[1:2] (!Tx ##1 Tx[*7]);
+  // Verifiserer Tx abort pattern (spec 8) - 7+ consecutive 1s on Tx (HDLC abort = no zero-stuffing)
+  property tx_abort_detected;
+    @(posedge Clk) disable iff(!Rst)
+    $rose(Tx_AbortedTrans) |-> ##[1:3] Tx [*7];
   endproperty;
 
-  tx_abort_assertion: assert property(@(posedge Clk) disable iff(!Rst) tx_abort_pattern) else begin
+  tx_abort_assertion: assert property(tx_abort_detected) else begin
     $error("ERROR: Tx did not generate abort pattern after Tx_AbortedTrans");
     ErrCntAssertions++;
   end
 
+  property tx_abort_trans_generation;
+    @(posedge Clk) disable iff(!Rst) 
+    $rose(Tx_AbortFrame) ##1 $fell(Tx_AbortFrame) |-> ##1 $rose(Tx_AbortedTrans);
+  endproperty
+  /*
+  tx_abort_trans_assertion: assert property(tx_abort_trans_generation) else begin
+    $error("ERROR: Tx_AbortTrans did not go high one clk cycle after Tx_AbortFrame.")
+
+  */
 endmodule

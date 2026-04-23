@@ -62,12 +62,14 @@
 
 `define BUFFER_SIZE         128  // Size of Rx_Buff and Tx_Buff in bytes
 `define FCS_SIZE            2    // Size of FCS in bytes
-`define NUM_RANDOM_TESTS    10//00   // Number of random tests to perform for each test case in the test program
+`define NUM_RANDOM_TESTS    10   // Number of random tests to perform for each test case in the test program
+`define MAX_OVERFLOW_BYTES   10
 
 `define START_END_FLAG      8'b01111110
 `define ABORT_FLAG          8'b11111110
 
 `define WAIT_TIME_ns        1000ns // Wait time in nano seconds
+`define MIN_SIZE            2 // Minimum size of Rx/Tx frame in bytes
 
 program testPr_hdlc(
   in_hdlc uin_hdlc
@@ -93,21 +95,21 @@ program testPr_hdlc(
     randomseed = $urandom; // Capture the random seed used for this run
     $display("Random seed for this run: %0d", randomseed);
 
-    // Generate stimulus and verify response for different size frames
+    // Generate stimulus and verify response for different frame size
     for (int i = 0; i < `NUM_RANDOM_TESTS; i++) begin
       if (i == 0)
-        Size = 4;                               // minimum size frame, adjusted from 1 to 4 as FCS got errors otherwise
+        Size = `MIN_SIZE;                               
       else if (i == `NUM_RANDOM_TESTS-1)
-        Size = `BUFFER_SIZE-2;                    // maximum size frame
+        Size = `BUFFER_SIZE-`FCS_SIZE;                    // maximum size frame
       else
-        Size = $urandom_range(4, `BUFFER_SIZE-2); // random size frame. range: [4..126]
+        Size = $urandom_range(`MIN_SIZE, `BUFFER_SIZE-`FCS_SIZE); // random size frame. range: [2..126]
 
         // Test behaviour:
         Receive(Size, 0, 0, 0, 0, 0, 0); //Normal
         Receive(Size, 1, 0, 0, 0, 0, 0); //Abort
         Receive(Size, 0, 1, 0, 0, 0, 0); // FCSerr
         Receive(Size, 0, 0, 1, 0, 0, 0); // Non-byte aligned
-        Receive(`BUFFER_SIZE, 0, 0, 0, 1, 0, 0); //Overflow
+        Receive(`BUFFER_SIZE - `FCS_SIZE + $urandom_range(1, `MAX_OVERFLOW_BYTES), 0, 0, 0, 1, 0, 0); //Overflow
         Receive(Size, 0, 0, 0, 0, 1, 0); // Dropped
         Receive(Size, 0, 0, 0, 0, 0, 1); // Skip read
         Transmit(Size, 0); // Normal
@@ -139,7 +141,7 @@ program testPr_hdlc(
 
     TbErrorCnt = 0;
 
-    #1000ns;
+    #`WAIT_TIME_ns;
     uin_hdlc.Rst         =   1'b1;
   endtask
 
@@ -166,6 +168,7 @@ program testPr_hdlc(
   /* ------------------
    Stimuli tasks 
    ----------------- */
+   // for start_end_pattern, flag == 1, for abort_pattern, flag == 0
   task InsertFlagOrAbort(int flag);
     @(posedge uin_hdlc.Clk);
     uin_hdlc.Rx = 1'b0;
@@ -188,11 +191,32 @@ program testPr_hdlc(
       uin_hdlc.Rx = 1'b1;
   endtask
 
-  task MakeRxStimulus(logic [127:0][7:0] Data, int Size, logic NoneByteAligned);
+  task GenerateRxStimulus(int Size, logic FCSerr, output logic[127:0][7:0] RxData);
+    logic [15:0] FCSBytes;
+    logic [15:0] FCSErrByte;
+
+    for (int i = 0; i < Size; i++) begin
+      RxData[i] = $urandom;
+    end
+    RxData[Size]   = '0;   // FCSbyte_0 
+    RxData[Size+1] = '0;   // FCSbyte_1
+
+    //Calculate FCS bits;
+    GenerateFCSBytes(RxData, Size, FCSBytes);
+    
+    FCSErrByte = $urandom_range(1, 65535);   // Random byte between 16'h0001 and 16'hFFFF
+    if (FCSerr)
+      FCSBytes = FCSBytes ^ FCSErrByte;
+    RxData[Size]   = FCSBytes[7:0];
+    RxData[Size+1] = FCSBytes[15:8];
+  endtask;
+
+  task SendRxStimulus(logic [127:0][7:0] Data, int Size, logic NonByteAligned);
     logic [4:0] PrevData;
     PrevData = '0;
     for (int i = 0; i < Size; i++) begin
       for (int j = 0; j < 8; j++) begin
+        // Bit stuffing if all 5 bits are 1
         if(&PrevData) begin
           @(posedge uin_hdlc.Clk);
           uin_hdlc.Rx = 1'b0;
@@ -200,25 +224,25 @@ program testPr_hdlc(
           PrevData[4] = 1'b0;
         end
 
-        @(posedge uin_hdlc.Clk);
-        uin_hdlc.Rx = Data[i][j];
-
-        PrevData = PrevData >> 1;
-        PrevData[4] = Data[i][j];
+        // skip random number of bits in the last byte if NonByteAlign flag is set
+        if (NonByteAligned && i == Size-1 && j > $urandom_range(1, 6)) begin
+          continue;
+        end 
+        else begin
+          @(posedge uin_hdlc.Clk);
+          uin_hdlc.Rx = Data[i][j];
+          PrevData = PrevData >> 1;
+          PrevData[4] = Data[i][j];
+        end 
       end
     end
-
-    // Send extra bits (not a full byte) to make data non-byte aligned
-    if (NoneByteAligned) begin
-      @(posedge uin_hdlc.Clk);
-      uin_hdlc.Rx = 1'b0;
-    end
+    //$display("Event %t: Finished sending RX stimulus, it turned out as: %b", $time, PrevData);
   endtask
 
   task Receive(int Size, int Abort, int FCSerr, int NonByteAligned, int Overflow, int Drop, int SkipRead);
-    logic [127:0][7:0] ReceiveData;
-    logic       [15:0] FCSBytes;
-    logic   [2:0][7:0] OverflowData;
+    logic [127:0][7:0] RxData;
+    int NumOverflowBytes;
+  
     string msg;
     if(Abort)
       msg = "- Abort";
@@ -238,18 +262,7 @@ program testPr_hdlc(
     $display("Event %t: Receiving message %s (Size=%0d)", $time, msg, Size);
     $display("------------------------------------------");
 
-    for (int i = 0; i < Size; i++) begin
-      ReceiveData[i] = $urandom;
-    end
-    ReceiveData[Size]   = '0;
-    ReceiveData[Size+1] = '0;
-
-    //Calculate FCS bits;
-    GenerateFCSBytes(ReceiveData, Size, FCSBytes);
-    if (FCSerr)
-      FCSBytes = FCSBytes ^ 16'h0001; // Flip the final bit in FSC to generate FCS error
-    ReceiveData[Size]   = FCSBytes[7:0];
-    ReceiveData[Size+1] = FCSBytes[15:8];
+    GenerateRxStimulus(Size, FCSerr, RxData);
 
     //Enable FCS. 
     if(!Overflow && !NonByteAligned)
@@ -260,14 +273,7 @@ program testPr_hdlc(
     //Generate stimulus
     InsertFlagOrAbort(1);
     
-    MakeRxStimulus(ReceiveData, Size + 2, NonByteAligned);
-    
-    if(Overflow) begin
-      OverflowData[0] = 8'h44;
-      OverflowData[1] = 8'hBB;
-      OverflowData[2] = 8'hCC;
-      MakeRxStimulus(OverflowData, 3, NonByteAligned);
-    end
+    SendRxStimulus(RxData, Size + `FCS_SIZE, NonByteAligned);
 
     if(Abort) begin
       InsertFlagOrAbort(0);
@@ -282,17 +288,17 @@ program testPr_hdlc(
       @(posedge uin_hdlc.Clk);
 
     if(Abort)
-      VerifyAbortReceive(ReceiveData, Size);
+      VerifyAbortReceive(RxData, Size);
     else if(Overflow)
-      VerifyOverflowReceive(ReceiveData, Size);
+      VerifyOverflowReceive(RxData, Size);
     else if (Drop)
-      VerifyDroppedReceive(ReceiveData, Size);
+      VerifyDroppedReceive(RxData, Size);
     else if(FCSerr)
-      VerifyFCSerrReceive(ReceiveData, Size);
+      VerifyFCSerrReceive(RxData, Size);
     else if(NonByteAligned)
-      VerifyNonByteAlignedReceive(ReceiveData, Size);
+      VerifyNonByteAlignedReceive(RxData, Size);
     else if(!SkipRead)
-      VerifyNormalReceive(ReceiveData, Size);
+      VerifyNormalReceive(RxData, Size);
 
     #`WAIT_TIME_ns;
   endtask
@@ -313,8 +319,8 @@ program testPr_hdlc(
 
     for (int i = 0; i < Size; i++)
       WrittenData[i] = $urandom;
-    WrittenData[Size]     = '0;
-    WrittenData[Size + 1] = '0;
+    WrittenData[Size]     = '0;   // FCSbyte_0
+    WrittenData[Size + 1] = '0;   // FCSbyte_1
 
     GenerateFCSBytes(WrittenData, Size, FCSBytes);
 
@@ -463,6 +469,7 @@ program testPr_hdlc(
   task VerifyAbortReceive(logic [127:0][7:0] data, int Size);
     logic [7:0] ReadData;
     logic [7:0] RxStatusControl;
+    logic [7:0] RxLen;
 
     ReadAddress(`Rx_SC_ADDR, RxStatusControl); 
 
@@ -486,7 +493,13 @@ program testPr_hdlc(
       TbErrorCnt++;
     end
 
-    // assert that all bytes in Rx_Buff is set to zero when Rx_AbortSignal is set
+    ReadAddress(`Rx_LEN_ADDR, RxLen);
+    assert(RxLen == Size) else begin 
+      $error("RxLen should be the same as the actual Size of the received rx data. Expected: %i, got: %i", Size, RxLen);
+      TbErrorCnt++;
+    end
+
+    // assert that all bytes in Rx_Buff is set to zero when Rx_AbortSignal is set (Spec 2)
     for (int i = 0; i < Size; i++) begin 
       ReadAddress(`Rx_BUFFER_ADDR, ReadData);
       assert(ReadData == 'h00) else begin 
@@ -501,12 +514,13 @@ program testPr_hdlc(
   task VerifyNormalReceive(logic [127:0][7:0] data, int Size);
     logic [7:0] ReadData;
     logic [7:0] RxStatusControl;
+    logic [7:0] RxLen;
     wait(uin_hdlc.Rx_Ready);
 
     ReadAddress(`Rx_SC_ADDR, RxStatusControl);  
 
     // assert size is smaller than buffer size when receiving normal package
-    assert(Size <= `BUFFER_SIZE-1) else begin 
+    assert(Size <= `BUFFER_SIZE-`FCS_SIZE) else begin 
       $error("Recieved size is too large (%h). Overflow bit should be high.", Size);
       TbErrorCnt++;
     end 
@@ -531,7 +545,13 @@ program testPr_hdlc(
       TbErrorCnt++;
     end
 
-    // assert read data match that of Rx_buff
+    ReadAddress(`Rx_LEN_ADDR, RxLen);
+    assert(RxLen == Size) else begin 
+      $error("RxLen does not match the actual Size of the received data. Expected %i, got %i", Size, RxLen);
+      TbErrorCnt++;
+    end
+
+    // assert read data match that of Rx_buff (Spec 1)
     for (int i = 0; i < Size; i++) begin
       ReadAddress(`Rx_BUFFER_ADDR, ReadData);       
       assert(ReadData == data[i]) else begin 
@@ -547,6 +567,7 @@ program testPr_hdlc(
   task VerifyOverflowReceive(logic [127:0][7:0] data, int Size);
     logic [7:0] ReadData;
     logic [7:0] RxStatusControl;
+    logic [7:0] RxLen;
     wait(uin_hdlc.Rx_Ready);
 
     ReadAddress(`Rx_SC_ADDR, RxStatusControl);
@@ -576,7 +597,13 @@ program testPr_hdlc(
       TbErrorCnt++;
     end 
 
-    // assert first 125 bytes match in Rx_buff
+    ReadAddress(`Rx_LEN_ADDR, RxLen);
+    assert(RxLen != Size) else begin 
+      $error("RxLen should not be the same as the actual Size when owerflow. Expected: %i, got: %i", Size, RxLen);
+      TbErrorCnt++;
+    end
+
+    // assert first 125 bytes match in Rx_buff (Spec 1)
     for (int i = 0; i < `BUFFER_SIZE -`FCS_SIZE; i++) begin 
       ReadAddress(`Rx_BUFFER_ADDR, ReadData);         // read off data from Rx_buff at address 'h3
       assert (ReadData == data[i]) else begin 
@@ -611,10 +638,36 @@ program testPr_hdlc(
     // Verify Rx_Ready is deasserted after drop
     ReadAddress(`Rx_SC_ADDR, RxStatusControl);
 
-    assert(RxStatusControl[`Rx_SC_READY] == 0) else begin
-      $error("Rx_Ready should be 0 after drop command");
+    // FCS error should result in frame error - Spec 16
+    assert(RxStatusControl[`Rx_SC_FRAME_ERR] == 0) else begin
+      $error("Rx_FrameError should be 1 when FCS error occurs");
       TbErrorCnt++;
     end
+
+    // Check all other status bits - Spec 3
+    assert(RxStatusControl[`Rx_SC_READY] == 0) else begin
+      $error("Rx_Ready should be 0 when frame received with FCS error");
+      TbErrorCnt++;
+    end
+
+    assert(RxStatusControl[`Rx_SC_ABORT_SIG] == 0) else begin
+      $error("Rx_AbortSignal should be 0 when FCS error occurs");
+      TbErrorCnt++;
+    end
+
+    assert(RxStatusControl[`Rx_SC_OVERFLOW] == 0) else begin
+      $error("Rx_Overflow should be 0 when FCS error occurs");
+      TbErrorCnt++;
+    end
+
+    // assert that all bytes in Rx_Buff is set to zero when Rx is dropped is set (Spec 2)
+    for (int i = 0; i < Size; i++) begin 
+      ReadAddress(`Rx_BUFFER_ADDR, ReadData);
+      assert(ReadData == 'h00) else begin 
+        $error("Rx_Data should be set to zero when an drop is received. Rx_Data[%h] is set to %h", i, ReadData);
+      end 
+      @(posedge uin_hdlc.Clk);
+    end 
     
   endtask
 
@@ -709,7 +762,9 @@ program testPr_hdlc(
       end
     end
 
-    VerifyCRCCheck(TransmittedData, FCSBytes, Size);
+    if (Size > 2) begin // CRC always is 0xFFFF if the size is 2 or smaller, so skip CRC check in that case
+      VerifyCRCCheck(TransmittedData, FCSBytes, Size);
+    end
 
     ReadAddress(`Tx_SC_ADDR, TxStatusControl);
     // Spec 17: Verify Tx_Done is asserted after entire TX buffer read
@@ -822,14 +877,9 @@ program testPr_hdlc(
   task VerifyAbortDuringTransmission(logic [127:0][7:0] data, int Size)
 
   endtask;
+  */
 
-  // Spec 11.a:
-  task VerifyCRCGeneration(logic [127:0][7:0] data, int Size)
-    logic [127:0][7:0] 
-
-    wait(uid_hdlc.)
-  endtask;
-
+/*
   // Spec 14:
   task VerifyFrameLengthMatchRxLEN(logic [127:0][7:0] data, int Size)
 
