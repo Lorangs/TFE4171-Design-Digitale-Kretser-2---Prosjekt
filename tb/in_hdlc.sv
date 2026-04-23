@@ -54,5 +54,13 @@ interface in_hdlc ();
   // TX internal
   logic       Tx_Done;
   logic       Tx_RdBuff;
+  logic       Tx_ValidFrame;
+  logic       Tx_AbortFrame;
+  logic       Tx_AbortedTrans;
+  logic       Tx_FCSDone;
+  logic       Tx_WriteFCS;
+  logic       Tx_Full;
+  logic [7:0] Tx_FrameSize;
+  logic       Tx_Enable;
 
 endinterface

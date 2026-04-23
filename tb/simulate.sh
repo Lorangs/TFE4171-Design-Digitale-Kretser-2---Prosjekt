@@ -11,17 +11,19 @@ else
 	exit 1
 fi
 
-set SEED = `date +%s`  # Generate seed based on current time (seconds since epoch: 01. 01. 1970).
+SEED=$(date +%s)  # Generate seed based on current time (seconds since epoch: 01. 01. 1970).
 
 printf "${RED}\nSimulating${NC}\n"
 if [[ "$@" =~ --gui ]]
 then
-  	echo vsim -assertdebug -voptargs="+acc" test_hdlc bind_hdlc -do "log -r *" \
-      +seed=$SEED &
+  	vsim -assertdebug -voptargs="+acc" test_hdlc bind_hdlc \
+      +seed=$SEED \
+	  -do "log -r *; coverage save -onexit -cvg -assert -directive coverage.ucdb" &
   	exit
 else
-	if vsim -assertdebug -c -voptargs="+acc" test_hdlc bind_hdlc -do "log -r *; run -all; exit" \
-      +seed=$SEED
+	if vsim -assertdebug -c -voptargs="+acc" test_hdlc bind_hdlc \
+      +seed=$SEED \
+	  -do "log -r *; coverage save -onexit -cvg -assert -directive coverage.ucdb; run -all; exit"
 	then
 		echo "Success"
 	else

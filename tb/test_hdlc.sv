@@ -38,7 +38,6 @@ module test_hdlc ();
   assign uin_hdlc.RxD                 = u_dut.RxD;
   assign uin_hdlc.ZeroDetect          = u_dut.u_RxChannel.ZeroDetect;
   
-  assign uin_hdlc.Tx_Done             = u_dut.Tx_Done;
   assign uin_hdlc.Tx_RdBuff           = u_dut.Tx_RdBuff;
   assign uin_hdlc.Tx_ValidFrame      = u_dut.Tx_ValidFrame;
   assign uin_hdlc.Tx_AbortFrame      = u_dut.Tx_AbortFrame;
@@ -47,7 +46,7 @@ module test_hdlc ();
   assign uin_hdlc.Tx_WriteFCS        = u_dut.Tx_WriteFCS;
   assign uin_hdlc.Tx_Full            = u_dut.Tx_Full;
   assign uin_hdlc.Tx_FrameSize       = u_dut.Tx_FrameSize;
-  assign uin_hdlc.Tx_RdBuff          = u_dut.Tx_RdBuff;
+  assign uin_hdlc.Tx_Enable          = u_dut.Tx_Enable;
 
 
   //Clock

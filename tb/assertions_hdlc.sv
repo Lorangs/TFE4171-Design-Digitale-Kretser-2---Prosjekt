@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////
 // Title:   assertions_hdlc
-// Author:  
-// Date:    
+// Author:  Lorang Strand & Walter Brynhilsen
+// Date:    23 April 2026
 //////////////////////////////////////////////////
 
 /* The assertions_hdlc module is a test module containing the concurrent
@@ -24,7 +24,19 @@ module assertions_hdlc (
   input  logic Rx_AbortDetect,
   input  logic Rx_AbortSignal,
   input  logic Rx_Overflow,
-  input  logic Rx_WrBuff
+  input  logic Rx_WrBuff,
+  input  logic Rx_EoF,
+  input  logic Rx_Ready,
+  input  logic Rx_FrameError,
+  input  logic Rx_Drop,
+  input  logic [7:0] Rx_Frame_size,
+  input  logic Rx_FCSerr,
+  input  logic Tx,
+  input  logic Tx_ValidFrame,
+  input  logic Tx_AbortFrame,
+  input  logic Tx_AbortedTrans,
+  input  logic Tx_FCSDone,
+  input  logic Tx_WriteFCS
 );
 
   initial begin
@@ -71,24 +83,34 @@ module assertions_hdlc (
 
  // Idle pattern: 8'b11111111
   sequence rx_idle_pattern;
-    (RX == 'hFF);
+    (Rx == 'hFF);
   endsequence;
 
   property rx_idle_detected;
-    rx_idle_patter |-> ##1 Rx_ValidFrame;
+    rx_idle_pattern |-> !Rx_ValidFrame;
   endproperty;
 
-  rx_idle_detected_assert:  assert property(@(posedge Clk) disable iff(Rx_AbortDetected || !Rst) rx_idle_detected) else begin
+  rx_idle_detected_assert:  assert property(@(posedge Clk) disable iff(Rx_AbortDetect || !Rst) rx_idle_detected) else begin
     $error("ERROR: Rx did not correctly generate idle pattern.");
     ErrCntAssertions++;
   end
   
   property tx_idle_pattern;
-    $fell(Tx_ValidFrame) and !Tx_AbortedTrans |-> ##1 (Tx throughout Tx_ValidFrame [->1]);
+    $fell(Tx_ValidFrame) and !Tx_AbortedTrans |-> ##9 Tx;
   endproperty;
 
-  tx_idle_assertion:  assert property(@(posedge Clk) diable iff(!Rst) tx_idle_pattern) else begin
+  tx_idle_assertion:  assert property(@(posedge Clk) disable iff(!Rst) tx_idle_pattern) else begin
     $error("ERROR: Tx did not generate idle pattern properly");
+    ErrCntAssertions++;
+  end
+
+  // Verifiserer Tx abort pattern (spec 8) - only when mid-transmission
+  property tx_abort_pattern;
+    $rose(Tx_AbortedTrans) and $past(Tx_ValidFrame) |-> ##[1:2] (!Tx ##1 Tx[*7]);
+  endproperty;
+
+  tx_abort_assertion: assert property(@(posedge Clk) disable iff(!Rst) tx_abort_pattern) else begin
+    $error("ERROR: Tx did not generate abort pattern after Tx_AbortedTrans");
     ErrCntAssertions++;
   end
 

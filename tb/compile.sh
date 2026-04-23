@@ -15,7 +15,7 @@ else
 fi
 
 printf "${RED}\nCompiling test files${NC}\n"
-if vlog -sv ./*.sv 
+if vlog -sv ./*.sv +fcover 
 then
 	echo "Success"
 else

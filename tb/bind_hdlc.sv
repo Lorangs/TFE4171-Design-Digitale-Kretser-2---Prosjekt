@@ -20,7 +20,7 @@ module bind_hdlc ();
     
     .Rx_EoF           (uin_hdlc.Rx_EoF),
     .Rx_Ready         (uin_hdlc.Rx_Ready),
-    .Rx_FrameError    (uin_hdlc.Rx_Frame_Error),
+    .Rx_FrameError    (uin_hdlc.Rx_FrameError),
     .Rx_Drop          (uin_hdlc.Rx_Drop),
     .Rx_Frame_size    (uin_hdlc.Rx_FrameSize),
     .Rx_FCSerr        (uin_hdlc.Rx_FCSerr),
